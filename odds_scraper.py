@@ -1,12 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 from time import sleep
-import numpy as np
-#import matplotlib.pyplot
-import matplotlib
-matplotlib.use('TkAgg')
 from recordtype import recordtype
-import matplotlib.pyplot as plt
+from selenium import webdriver
 
 
 def generate_url(sport):
@@ -174,7 +170,7 @@ def make_game_object(game_tag):
     return game
 
 
-# TODO: Add print function to display all information about a game
+# TODO: Add print function to display all information about a game for debugging
 def display_game_information(game_object):
    # print "Current odds information as of: " + # CUR TIME
     pass
