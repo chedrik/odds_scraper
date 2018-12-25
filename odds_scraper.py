@@ -26,6 +26,10 @@ def generate_url(sport):
 
 # TODO: error checking, needed? or reduce current amount
 def get_game_datetime(game_tag):
+    '''
+    :param game_tag: game_container from beautiful soup, to be parsed
+    :return: date of game and time in eastern timezone
+    '''
     date, clock_time = None, None
     date_tag = game_tag.find('span', class_='period')
     if date_tag:
@@ -37,6 +41,10 @@ def get_game_datetime(game_tag):
 
 
 def get_team_names(game_tag):
+    '''
+    :param game_tag: game_container from beautiful soup, to be parsed
+    :return: full name of away team, full name of home team
+    '''
     away_team, home_team = None, None
     team_tags = game_tag.find_all('span', class_='name')
     if team_tags and len(team_tags) == 2:
@@ -46,6 +54,10 @@ def get_team_names(game_tag):
 
 
 def get_moneyline(lines):
+    '''
+    :param lines: recordtype with all prices [away_sprd, home_sprd, away_ml, home_ml, over, under] and other line info
+    :return: price of away team, price of home team, with even odds converted to + 100.0
+    '''
     away_price, home_price = None, None
     if lines.has_moneyline:
         away_price_text = lines.prices[2].strip()
@@ -62,9 +74,12 @@ def get_moneyline(lines):
 
 
 def get_game_spread(lines):
+    '''
+    :param lines: recordtype with all prices [away_sprd, home_sprd, away_ml, home_ml, over, under] and other line info
+    :return: tuples for away team, home team of form (spread, price) with even converted to 100.0 and pickem -> TBD
+    '''
     # TODO: Deal with 'pickem'
     away_spread, home_spread, away_price, home_price = None, None, None, None
-    #lines = check_has_lines(game_tag)
 
     if lines.has_spread:
         away_spread = float(lines.spread[0].text)
@@ -88,6 +103,10 @@ def get_game_spread(lines):
 
 
 def get_game_total(lines):
+    '''
+    :param lines: recordtype with all prices [away_sprd, home_sprd, away_ml, home_ml, over, under] and other line info
+    :return: tuples for over, under of form (spread, price) with even converted to 100.0
+    '''
     over, under, over_price, under_price = None, None, None, None
    # lines = check_has_lines(game_tag)
     if lines.has_total:
@@ -111,6 +130,10 @@ def get_game_total(lines):
 
 
 def check_has_lines(game_tag): # TODO: This is ugly.  Come up with better way to handle this?
+    '''
+    :param game_tag: game_container from beautiful soup, to be parsed
+    :return: recordtpe containing all parsed line information
+    '''
     # check whether all lines are there or not and return the found tag if so
     Lines = recordtype('Lines', 'spread moneyline total prices has_spread has_moneyline has_total') # TODO: move this out of function
     lines = Lines(spread=None, moneyline=None, total=None, prices=None, has_spread=False, has_moneyline=False, has_total=False)
@@ -155,6 +178,10 @@ def check_has_lines(game_tag): # TODO: This is ugly.  Come up with better way to
 
 
 def make_game_object(game_tag):
+    '''
+    :param game_tag: game_container from beautiful soup, to be parsed
+    :return: game recordtype containing all information parsed, ready to be added to DB
+    '''
     # main parser wrapper.... for now
     game_date, game_time = get_game_datetime(game_tag)
     away_team, home_team = get_team_names(game_tag)

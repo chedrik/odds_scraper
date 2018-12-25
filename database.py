@@ -1,24 +1,32 @@
 from pymongo import MongoClient
 import pprint
-import time # For testing
 import datetime
-client = MongoClient()  # Default local host
-db = client.bovadaDB
-nba_collection = db.nba
 
-db_test = client.pymongo_test
-collection = db_test.tester
-
-# cursor = client.list_databases()
-# for db in cursor:
-#     print db
+# db_test = client.pymongo_test <-- has current nba from initall test
+# collection = db_test.tester
 
 
-def add_to_database(game, db_collecton=collection):  # TODO: Split by hour? or by more than that?  Need to optimize for performance
-    cur_time = datetime.datetime.now()
-    disp_cur_time = cur_time.ctime()  #TODO: replace this with $currentDate
+def initialize_databases():
+    client = MongoClient()  # Default local host
+    db = client.bovadaDB
+    return client, db
 
-    #if collection.find({"game_id" : game.game_id}) is not None:
+
+def select_collection(db, sport='NBA'):
+    if sport == 'NBA':
+        return db.nba
+    else:
+        return None  # Not configured yet
+
+
+def add_to_database(game, db_collecton):
+    '''
+    :param game: recordtype of game information containing id, spreads, prices, etc.
+    :param db_collecton: collection in database to add to
+    :return: results of attempt to add to collection
+    '''
+    cur_time = datetime.datetime.now()  # TODO: replace this with $currentDate
+
     str_to_add = '.' + str(cur_time.day) + '.' + str(cur_time.hour)
     post_result = db_collecton.update({'game_id': game.game_id},
                                     {'$set': {'update_time': cur_time, 'game_id': game.game_id},
@@ -30,8 +38,23 @@ def add_to_database(game, db_collecton=collection):  # TODO: Split by hour? or b
                                                'under' + str_to_add: [str(cur_time.minute), game.under]}
                                      }, upsert=True)
 
-    return
+    return post_result
 
+
+def print_all_databases(client):
+    cursor = client.list_databases()
+    for db in cursor:
+        print db
+
+
+def print_all_collection_items(collection):
+    for item in collection.find():
+        pprint.pprint(item)
+
+
+def print_all_db_collections(db):
+    for collection in db.collection_names():
+        pprint.pprint(collection)
 
 # def remove_old_games(game_id_list):
 #     # iterate over every document in db, and if not in current games remove to keep memory down  (FOR NOW)
@@ -41,6 +64,3 @@ def add_to_database(game, db_collecton=collection):  # TODO: Split by hour? or b
 #             pass
 #     return
 
-
-# for x in (collection.find()):
-#     pprint.pprint(x)
