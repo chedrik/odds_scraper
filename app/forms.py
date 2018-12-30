@@ -23,6 +23,17 @@ class RegisterForm(FlaskForm):
             raise ValidationError('This email address is already in use.')
 
 
+class ResetPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Reset')
+
+
+class SetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password_check = PasswordField('Reenter Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')
+
+
 class FavoritesForm(FlaskForm):
     choices = [(0,0), (1,1), (2,2), (3,3), (4,4)]
     field = SelectMultipleField(u'Field name', choices=app.config['FAVORITES'])

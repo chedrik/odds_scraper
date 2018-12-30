@@ -2,9 +2,26 @@
 
 {% block content %}
     <h1>Hello, {{ current_user.email }}!</h1>
+    {% for sport in current_user.favorites.sports %}
+        <p> {{ sport }} </p>
+    {% endfor %}
     {% for game in games %}
         {% include '_game.html' %}
     {% endfor %}
+<!-- TODO: format so it goes like this:
+    also, if no games, display no games upcoming
+    sport
+        game 1
+        game 2
+    sport 2
+        game 1
+        game 2
+    team 1
+        game
+    team 2
+        game
+    button w/ dropdown to remove favorites
+        -->
 
     <form action="" method="post" name="FavoritesForm">
         {{form.hidden_tag()}}

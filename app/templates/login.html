@@ -27,5 +27,6 @@
             {{ form.sign_in() }}
         </p>
         <p>New User? <a href="{{ url_for('register') }}"> Click to Create Profile</a></p>
+        <p>Forgot Password? <a href="{{ url_for('reset_password_request') }}">Click to reset</p>
     </form>
 {% endblock %}

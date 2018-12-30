@@ -25,7 +25,7 @@ def add_game_to_database(game, db_collection):
     :param db_collecton: collection in database to add to
     :return: results of attempt to add to collection
     '''
-    cur_time = datetime.datetime.now()  # TODO: replace this with $currentDate
+    cur_time = datetime.datetime.now()  # TODO: replace this with $currentDate, or smarter UTC time and convert to local time in flask front end implementation
 
     str_to_add = '.' + str(cur_time.day) + '.' + str(cur_time.hour)
     post_result = db_collection.update({'game_id': game.game_id},
@@ -43,7 +43,9 @@ def add_game_to_database(game, db_collection):
 
 def add_user_to_database(user, db_collection):
     post_result = db_collection.update({'email': user.email},
-                                    {'$set': {'email': user.email, 'password_hash': user.password_hash},
+                                    {'$set': {'email': user.email,
+                                              'password_hash': user.password_hash,
+                                              'favorites': user.favorites},
                                      }, upsert=True)
 
     return post_result

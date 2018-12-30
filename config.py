@@ -4,6 +4,17 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'fake_key'
-    FAVORITES = [(0,0), (1,1), (2,2), (3,3), (4,4)]
+    FAVORITES = [('NFL', 'NFL'),
+                 ('CFB', 'CFB'),
+                 ('NBA', 'NBA'),
+                 ('CBB', 'CBB'),
+                 ('Soccer', 'Soccer'),
+                 ('Hockey', 'Hockey')]
+    MAIL_SERVER = os.environ.get('MAIL_SERVER')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    ADMINS = ['gambling.odds@gmail.com']
     #DB_URI = os.environ.get('DATABASE_URL') or os.path.join(basedir, 'app.db')
 
