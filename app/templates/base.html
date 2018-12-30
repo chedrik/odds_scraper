@@ -1,0 +1,38 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - Odds Tracker</title>
+        {% else %}
+        <title>Welcome to Odds Tracker</title>
+        {% endif %}
+    </head>
+    <body>
+        <div> <!-- TODO: reference these to actual pages when they exist -->
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('user', email=current_user.email) }}">Favorites</a>
+            <a href="{{ url_for('index') }}">NFL</a>
+            <a href="{{ url_for('index') }}">CFB</a>
+            <a href="{{ url_for('index') }}">NBA</a>
+            <a href="{{ url_for('index') }}">CBB</a>
+            <a href="{{ url_for('index') }}">Soccer</a>
+            <a href="{{ url_for('index') }}">Hockey</a>
+            {% if current_user.is_anonymous %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% else %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+        </div>
+        <hr>
+        <!-- popups -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li> {{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </body>
+</html>

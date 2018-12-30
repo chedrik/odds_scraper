@@ -24,7 +24,7 @@ while count < 50:
     driver.close()
     for k in range(len(game_containers)):
         game = make_game_object(game_containers[k])
-        add_to_database(game)
+        add_game_to_database(game)
         string = 'Added to db: ' + str(game.game_id)
         print string
     time.sleep(300)

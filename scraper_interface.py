@@ -35,7 +35,7 @@ def main_loop(database):
     game_containers = extract_game_containers(web_driver, 'NBA')
     for k in range(len(game_containers)):
         game = make_game_object(game_containers[k])
-        result = add_to_database(game, select_collection(database, 'NBA'))
+        result = add_game_to_database(game, select_collection(database, 'NBA'))
         string = 'Added ' + str(game.game_id) + ' at time: ' + str(datetime.datetime.now()) + ' with result: '
         print string
         print result

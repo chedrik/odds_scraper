@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Sign in</h1>
+    <form action="" method="post" novalidate>
+        {{form.hidden_tag() }}
+        <p>
+            {{ form.email.label }} <br>
+            {{ form.email(size=32) }}
+            {% for error in form.email.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+
+        </p>
+        <p>
+            {{ form.password.label }} <br>
+            {{ form.password(size=32) }}
+            {% for error in form.password.errors %}
+             <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.password_check.label }} <br>
+            {{ form.password_check(size=32) }}
+            {% for error in form.password_check.errors %}
+             <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.register() }}
+        </p>
+    </form>
+{% endblock %}

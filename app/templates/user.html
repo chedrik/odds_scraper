@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hello, {{ current_user.email }}!</h1>
+    {% for game in games %}
+        {% include '_game.html' %}
+    {% endfor %}
+
+    <form action="" method="post" name="FavoritesForm">
+        {{form.hidden_tag()}}
+        <p>
+            {{form.field(size=0)}}
+        </p>
+        <p>
+            {{ form.add_fav() }}
+        </p>
+    </form>
+{% endblock %}
