@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Settings</h1>
+    <p>Delete Account</p>
+    {% if confirm_form %}
+        <p>Are you sure you wish to delete your account? This cannot be undone.</p>
+        <form action="" method="post" novalidate>
+        {{confirm_form.hidden_tag() }}
+        <p>
+            {{ confirm_form.yes() }}
+            {{ confirm_form.no() }}
+        </p>
+        </form>
+    {% else %}
+        <form action="" method="post" novalidate>
+            {{form.hidden_tag() }}
+            <p>
+                {{ form.delete() }}
+            </p>
+        </form>
+    {% endif %}
+{% endblock %}

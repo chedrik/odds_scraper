@@ -1,0 +1,9 @@
+Dear {{ user.email }},
+
+You have successfully deleted your account.
+
+Thank you for using the service, please feel free to reach out with any comments you may have.
+
+Regards,
+
+Chasen

@@ -20,6 +20,10 @@ def load_user(id):
     return user
 
 
+def delete_user(id):
+    return db.users.remove({'_id': ObjectId(id)})
+
+
 class User(UserMixin):
 
     def __init__(self, id=None, email=None, password_hash=None, favorites=None):

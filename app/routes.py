@@ -2,10 +2,12 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db, login
-from app.forms import LoginForm, RegisterForm, FavoritesForm, ResetPasswordForm, SetPasswordForm
+from app.forms import LoginForm, RegisterForm, FavoritesForm, ResetPasswordForm, SetPasswordForm, DeleteAccountForm, \
+    ConfirmForm
 from app.models import User
 from app.email import send_email
 from database import add_user_to_database
+from models import delete_user
 
 
 @app.route('/')
@@ -35,9 +37,13 @@ def login():
         else:
             user = None
         flash('Login requested for {}, remember {}'.format(form.email.data, form.remember_me.data))
-        if user is None or not user.check_password(form.password.data):
+        if user is None:
+            flash('Email not recognized')
+            return redirect(url_for('login'))
+        elif not user.check_password(form.password.data):
             flash('Incorrect password')
             return redirect(url_for('login'))
+
         login_user(user, remember=form.remember_me.data)
         redirect_page = request.args.get('next')
         if not redirect_page or url_parse(redirect_page).netloc != '':  # 2nd condition prevents redirect to diff site
@@ -127,3 +133,27 @@ def reset_password(token):
         flash('You have successfully reset your password! Please login')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
+
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    form = DeleteAccountForm()
+    confirm_form = ConfirmForm()
+    if confirm_form.yes.data:
+        send_email('Account Deleted',
+                   sender=app.config['ADMINS'][0],
+                   recipients=[current_user.email],
+                   text_body=render_template('email/delete_account.txt',
+                                             user=current_user),
+                   html_body=render_template('email/delete_account.html',
+                                             user=current_user)
+                   )
+        result = delete_user(current_user.id)
+        flash('User ' + current_user.email + ' successfully removed')
+        return redirect(url_for('index'))
+    elif confirm_form.no.data:
+        return render_template('settings.html', form=form, confirm_form=None)
+    if form.validate_on_submit():
+        return render_template('settings.html', form=form, confirm_form=confirm_form)
+    return render_template('settings.html', form=form, confirm_form=None)

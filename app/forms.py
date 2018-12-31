@@ -35,6 +35,14 @@ class SetPasswordForm(FlaskForm):
 
 
 class FavoritesForm(FlaskForm):
-    choices = [(0,0), (1,1), (2,2), (3,3), (4,4)]
     field = SelectMultipleField(u'Field name', choices=app.config['FAVORITES'])
     add_fav = SubmitField('Submit')
+
+
+class DeleteAccountForm(FlaskForm):
+    delete = SubmitField('Delete')
+
+
+class ConfirmForm(FlaskForm):
+    yes = SubmitField('YES')
+    no = SubmitField('NO')
