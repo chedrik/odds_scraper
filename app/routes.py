@@ -71,7 +71,7 @@ def user(email=None):
     user_ = User(id=user_from_db['_id'], email=user_from_db['email'],
                  password_hash=user_from_db['password_hash'], favorites=user_from_db['favorites'])
     games = user_.get_all_favorites()
-    # TODO: fetch favorites based on user pref, pagination
+    # TODO: pagination?
     form = FavoritesForm()
     if request.method == 'POST':
         user_.add_favorite(form.field.data)

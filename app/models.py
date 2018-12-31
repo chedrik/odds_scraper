@@ -29,7 +29,7 @@ class User(UserMixin):
         if favorites is not None:
             self.favorites = favorites
         else:
-            self.favorites = {'sports': [], 'teams': []}  # TODO: implement favorites
+            self.favorites = {'sports': [], 'teams': []}
 
     def __repr__(self):
         return '<User {}>'.format(self.email)
@@ -42,7 +42,7 @@ class User(UserMixin):
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
-            {'reset_password': self.id, 'exp': time() + expires_in},
+            {'reset_password': str(self.id), 'exp': time() + expires_in},
             app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
     def add_favorite(self, items):
