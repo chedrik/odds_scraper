@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db, login
-from app.forms import LoginForm, RegisterForm, FavoritesForm, ResetPasswordForm, SetPasswordForm, DeleteAccountForm, \
+from app.forms import LoginForm, RegisterForm, ResetPasswordForm, SetPasswordForm, DeleteAccountForm, \
     ConfirmForm
 from app.models import User
 from app.email import send_email
@@ -13,15 +13,7 @@ from models import delete_user
 @app.route('/')
 @app.route('/index')
 def index():
-    games = [{'game': 'dubs v cavs',
-              'spread': '-1.5',
-              'over': '225',
-    }, {'game': 'lakers celtics',
-              'spread': '+4.5',
-              'over': '201',
-    }]  # Test favorited games
-
-    return render_template('index.html', title='Home', games=games)
+    return render_template('index.html', title='Home')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -78,12 +70,16 @@ def user(email=None):
                  password_hash=user_from_db['password_hash'], favorites=user_from_db['favorites'])
     games = user_.get_all_favorites()
     # TODO: pagination?
-    form = FavoritesForm()
+
     if request.method == 'POST':
-        user_.add_favorite(form.field.data)
+        if request.form['favorites'] in app.config['FAVORITES']:
+            user_.add_favorite([request.form['favorites']])
+            flash('Added ' + request.form['favorites'] + ' to favorites')
+        else:
+            flash('Invalid Selection')
         return redirect(url_for('user', email=current_user.email))
 
-    return render_template('user.html', user=user_, games=games, form=form)
+    return render_template('user.html', user=user_, games=games, mylist=app.config['FAVORITES'])
 
 
 @app.route('/logout')

@@ -34,11 +34,6 @@ class SetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 
-class FavoritesForm(FlaskForm):
-    field = SelectMultipleField(u'Field name', choices=app.config['FAVORITES'])
-    add_fav = SubmitField('Submit')
-
-
 class DeleteAccountForm(FlaskForm):
     delete = SubmitField('Delete')
 

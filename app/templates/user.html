@@ -5,6 +5,9 @@
     {% for sport in current_user.favorites.sports %}
         <p> {{ sport }} </p>
     {% endfor %}
+    {% for team in current_user.favorites.teams %}
+        <p> {{ team }} </p>
+    {% endfor %}
     {% for game in games %}
         {% include '_game.html' %}
     {% endfor %}
@@ -23,13 +26,15 @@
     button w/ dropdown to remove favorites
         -->
 
-    <form action="" method="post" name="FavoritesForm">
-        {{form.hidden_tag()}}
-        <p>
-            {{form.field(size=0)}}
-        </p>
-        <p>
-            {{ form.add_fav() }}
-        </p>
-    </form>
+<datalist id="fav_options">
+    {% for item in mylist %}
+    <option value="{{item}}">
+    {% endfor %}
+</datalist>
+<form method="post" action="">
+    <p>Select Favorite To Add</p>
+
+    <input type="text" name="favorites" list="fav_options">
+</form>
+
 {% endblock %}
