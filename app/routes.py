@@ -67,18 +67,30 @@ def user(email=None):
     user_from_db = db.users.find_one({"email": email})
     user_ = User(id=user_from_db['_id'], email=user_from_db['email'],
                  password_hash=user_from_db['password_hash'], favorites=user_from_db['favorites'])
-    games = user_.get_all_favorites()
+    games, gameless_favorites = user_.get_all_favorites()
     # TODO: pagination?
 
     if request.method == 'POST':
-        if request.form['favorites'] in app.config['FAVORITES']:
-            user_.add_favorite([request.form['favorites']])
-            flash('Added ' + request.form['favorites'] + ' to favorites')
+        if request.form.get('favorites'):
+            if request.form['favorites'] in app.config['FAVORITES']:
+                _, not_added = user_.add_favorite([request.form['favorites']])
+                if not_added:
+                    flash(request.form['favorites'] + ' was already included in your favorites')
+                else:
+                    flash('Added ' + request.form['favorites'] + ' to favorites')
+            else:
+                flash('Invalid Selection')
         else:
-            flash('Invalid Selection')
+            if request.form.get('remove_favorites') in current_user.favorites_list:
+                result = user_.remove_favorites([request.form.get('remove_favorites')])
+                flash('Removed ' + request.form['remove_favorites'] + ' from favorites')
+            else:
+                flash('Invalid Selection')
+
         return redirect(url_for('user', email=current_user.email))
 
-    return render_template('user.html', user=user_, games=games, mylist=app.config['FAVORITES'])
+    return render_template('user.html', user=user_, games=games, gameless_fav=gameless_favorites,
+                           cur_fav=current_user.favorites_list,  mylist=app.config['FAVORITES'])
 
 
 @app.route('/logout')
@@ -148,7 +160,7 @@ def settings():
         flash('User ' + current_user.email + ' successfully removed')
         return redirect(url_for('index'))
     elif confirm_form.no.data:
-        return render_template('settings.html', form=form, confirm_form=None)
+        return render_template('settings.html', form=form)
     if form.validate_on_submit():
         return render_template('settings.html', form=form, confirm_form=confirm_form)
-    return render_template('settings.html', form=form, confirm_form=None)
+    return render_template('settings.html', form=form)

@@ -30,10 +30,16 @@ class User(UserMixin):
         self.id = id
         self.email = email
         self.password_hash = password_hash
+        self.favorites_list = []
         if favorites is not None:
             self.favorites = favorites
+            for item in favorites['sports']:
+                self.favorites_list.append(item)
+            for item in favorites['teams']:
+                self.favorites_list.append(item)
         else:
             self.favorites = {'sports': [], 'teams': []}
+            self.favorites_list = []
 
     def __repr__(self):
         return '<User {}>'.format(self.email)
@@ -50,41 +56,57 @@ class User(UserMixin):
             app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
     def add_favorite(self, items):
+        not_added = []
         for item in items:
             if item in sports:
                 if item not in self.favorites['sports']:
                     self.favorites['sports'].append(item)
+                    self.favorites_list.append(item)
+                else:
+                    not_added.append(item)
             else:
                 if item not in self.favorites['teams']:
                     self.favorites['teams'].append(item)
+                    self.favorites_list.append(item)
+                else:
+                    not_added.append(item)
         result = add_user_favorites(self, db.users)
-        return result
+        return result, not_added
 
-    def remove_favorite(self, items):  # TODO: HTML for this function
+    def remove_favorites(self, items):  # TODO: HTML for this function
         for item in items:
             if item in sports:
                 if item in self.favorites['sports']:
                     self.favorites['sports'].remove(item)
+                    self.favorites_list.remove(item)
             else:
                 if item in self.favorites['teams']:
                     self.favorites['teams'].remove(item)
+                    self.favorites_list.remove(item)
         result = add_user_favorites(self, db.users)
         return result
 
     def get_all_favorites(self):
         favorites = []
+        favorites_without_games = []
         for sport in self.favorites['sports']:
             collection = select_collection(db, sport)
-            for game in collection.find():
-                favorites.append(game)
+            cursor = collection.find()
+            if cursor.count() > 0:
+                for game in collection.find():
+                    favorites.append(game)
+            else:
+                favorites_without_games.append(sport)
         for team in self.favorites['teams']:
-            # TODO: determine the sport of the team, maybe can be encoded in the dropdown via submenu type setup? TBD
+            # TODO: determine the sport of the team
             collection = select_collection(db, 'NBA')
             game = collection.find_one({'game_id': team})
             if game is not None:
                 favorites.append(game)
+            else:
+                favorites_without_games.append(team)
 
-        return favorites
+        return favorites, favorites_without_games
 
     @staticmethod
     def verify_reset_password_token(token):

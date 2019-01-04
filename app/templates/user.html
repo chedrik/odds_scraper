@@ -2,29 +2,14 @@
 
 {% block content %}
     <h1>Hello, {{ current_user.email }}!</h1>
-    {% for sport in current_user.favorites.sports %}
-        <p> {{ sport }} </p>
+    <p>There are no upcoming games scheduled for these favorites: </p>
+    {% for fave in gameless_fav %}
+        <p> {{ fave }}</p>
     {% endfor %}
-    {% for team in current_user.favorites.teams %}
-        <p> {{ team }} </p>
-    {% endfor %}
+
     {% for game in games %}
         {% include '_game.html' %}
     {% endfor %}
-<!-- TODO: format so it goes like this:
-    also, if no games, display no games upcoming
-    sport
-        game 1
-        game 2
-    sport 2
-        game 1
-        game 2
-    team 1
-        game
-    team 2
-        game
-    button w/ dropdown to remove favorites
-        -->
 
 <datalist id="fav_options">
     {% for item in mylist %}
@@ -37,4 +22,14 @@
     <input type="text" name="favorites" list="fav_options">
 </form>
 
+<datalist id="current_favorites">
+    {% for item in cur_fav %}
+    <option value="{{item}}">
+    {% endfor %}
+</datalist>
+<form method="post" action="">
+    <p>Select Favorite To Remove</p>
+
+    <input type="text" name="remove_favorites" list="current_favorites">
+</form>
 {% endblock %}
