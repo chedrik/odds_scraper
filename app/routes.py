@@ -54,6 +54,14 @@ def register():
         user.set_password(form.password.data)
         result = add_user_to_database(user, db.users)
         flash('You are now registered')
+        send_email('Welcome!',
+                   sender=app.config['ADMINS'][0],
+                   recipients=[user.email],
+                   text_body=render_template('email/welcome.txt',
+                                             user=user),
+                   html_body=render_template('email/welcome.html',
+                                             user=user)
+                   )
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
