@@ -10,12 +10,12 @@
         <div> <!-- TODO: reference these to actual pages when they exist -->
             <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('user', email=current_user.email) }}">Favorites</a>
-            <a href="{{ url_for('index') }}">NFL</a>
-            <a href="{{ url_for('index') }}">CFB</a>
-            <a href="{{ url_for('index') }}">NBA</a>
-            <a href="{{ url_for('index') }}">CBB</a>
-            <a href="{{ url_for('index') }}">Soccer</a>
-            <a href="{{ url_for('index') }}">Hockey</a>
+            <a href="{{ url_for('sport', cur_sport='NFL') }}">NFL</a>
+            <a href="{{ url_for('sport', cur_sport='CFB') }}">CFB</a>
+            <a href="{{ url_for('sport', cur_sport='NBA') }}">NBA</a>
+            <a href="{{ url_for('sport', cur_sport='CBB') }}">CBB</a>
+            <a href="{{ url_for('sport', cur_sport='Soccer') }}">Soccer</a>
+            <a href="{{ url_for('sport', cur_sport='Hockey') }}">Hockey</a>
             {% if current_user.is_anonymous %}
             <a href="{{ url_for('login') }}">Login</a>
             {% else %}

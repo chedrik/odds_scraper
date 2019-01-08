@@ -101,6 +101,11 @@ def user(email=None):
                            cur_fav=current_user.favorites_list,  mylist=app.config['FAVORITES'])
 
 
+@app.route('/sport/<cur_sport>', methods=['GET', 'POST'])
+def sport(cur_sport=None):
+    return render_template('sport.html', cur_sport=cur_sport)
+
+
 @app.route('/logout')
 def logout():
     logout_user()
