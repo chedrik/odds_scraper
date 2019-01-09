@@ -3,7 +3,8 @@ from bs4 import BeautifulSoup
 from time import sleep
 from recordtype import recordtype
 from selenium import webdriver
-
+from dateutil.parser import parse
+import pytz
 
 def generate_url(sport):
     """
@@ -28,16 +29,21 @@ def generate_url(sport):
 def get_game_datetime(game_tag):
     '''
     :param game_tag: game_container from beautiful soup, to be parsed
-    :return: date of game and time in eastern timezone
+    :return: datetime object in UTC time
     '''
-    date, clock_time = None, None
+    date_ob = None
     date_tag = game_tag.find('span', class_='period')
     if date_tag:
         date = date_tag.contents[0].strip()
         clock_tag = date_tag.find('time', class_='clock')
         if clock_tag:
             clock_time = clock_tag.string.strip()
-    return date, clock_time
+            date_ob = parse(date + ' ' + clock_time)
+        else:
+            date_ob = parse(date)
+        date_ob = pytz.timezone('US/Eastern').localize(date_ob).astimezone(pytz.utc)
+
+    return date_ob
 
 
 def get_team_names(game_tag):
@@ -183,14 +189,14 @@ def make_game_object(game_tag):
     :return: game recordtype containing all information parsed, ready to be added to DB
     '''
     # main parser wrapper.... for now
-    game_date, game_time = get_game_datetime(game_tag)
+    game_datetime = get_game_datetime(game_tag)
     away_team, home_team = get_team_names(game_tag)
     game_lines = check_has_lines(game_tag)
     away_spread, home_spread = get_game_spread(game_lines)
     away_ml, home_ml = get_moneyline(game_lines)
     over, under = get_game_total(game_lines)
 
-    game_id = (game_date, game_time, home_team, away_team)
+    game_id = (game_datetime, home_team, away_team)
     Game = recordtype('Game', 'game_id away_spread home_spread away_ml home_ml over under')  # TODO: move this out of function
     game = Game(game_id=game_id, away_spread=away_spread, home_spread=home_spread,
                 away_ml=away_ml, home_ml=home_ml, over=over, under=under)
