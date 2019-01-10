@@ -41,7 +41,7 @@ def get_game_datetime(game_tag):
             date_ob = parse(date + ' ' + clock_time)
         else:
             date_ob = parse(date)
-        date_ob = pytz.timezone('US/Eastern').localize(date_ob).astimezone(pytz.utc)
+        date_ob = pytz.timezone('US/Pacific').localize(date_ob).astimezone(pytz.utc)
 
     return date_ob
 
@@ -135,7 +135,7 @@ def get_game_total(lines):
     return over_tuple, under_tuple
 
 
-def check_has_lines(game_tag): # TODO: This is ugly.  Come up with better way to handle this?
+def check_has_lines(game_tag):  # TODO: This is ugly.  Come up with better way to handle this?
     '''
     :param game_tag: game_container from beautiful soup, to be parsed
     :return: recordtpe containing all parsed line information

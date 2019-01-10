@@ -2,6 +2,7 @@ from flask import Flask
 from config import Config
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_moment import Moment
 from database import initialize_databases
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
@@ -13,6 +14,7 @@ app.config.update(ENV='development')
 login = LoginManager(app)
 login.login_view = 'login'
 mail = Mail(app)
+moment = Moment(app)
 client, db = initialize_databases()
 
 # exception logging

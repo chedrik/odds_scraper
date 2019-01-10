@@ -100,9 +100,10 @@ class User(UserMixin):
         for team in self.favorites['teams']:
             # TODO: determine the sport of the team
             collection = select_collection(db, 'NBA')
-            game = collection.find_one({'game_id': team})
-            if game is not None:
-                favorites.append(game)
+            game_cursor = collection.find({'game_id': team}) # TODO: BUGFIX, doesnt find both teams, likely due to "find_one". Should iterate over cursor1
+            if game_cursor.count() > 0:
+                for game in collection.find({'game_id': team}):
+                    favorites.append(game)
             else:
                 favorites_without_games.append(team)
 
