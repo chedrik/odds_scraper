@@ -16,6 +16,9 @@ login.login_view = 'login'
 mail = Mail(app)
 moment = Moment(app)
 client, db = initialize_databases()
+from app.errors import bp as errors_bp
+app.register_blueprint(errors_bp)
+
 
 # exception logging
 if app.config['MAIL_SERVER']:
@@ -43,4 +46,4 @@ app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 app.logger.info('Started odds scraper')
 
-from app import routes, models, errors
+from app import routes, models
