@@ -1,5 +1,8 @@
 import os
+from dotenv import load_dotenv
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config(object):
@@ -48,4 +51,4 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['gambling.odds@gmail.com']
     #DB_URI = os.environ.get('DATABASE_URL') or os.path.join(basedir, 'app.db')
-
+    # TODO: clean out venv and then requirements.txt
