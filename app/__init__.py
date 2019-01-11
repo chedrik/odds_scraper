@@ -23,6 +23,9 @@ app.register_blueprint(errors_bp)
 from app.auth import bp as auth_bp
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
+from app.main import bp as main_bp
+app.register_blueprint(main_bp)
+
 # exception logging
 if app.config['MAIL_SERVER']:
     auth = None
@@ -49,4 +52,4 @@ app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 app.logger.info('Started odds scraper')
 
-from app import routes, models
+from app import models

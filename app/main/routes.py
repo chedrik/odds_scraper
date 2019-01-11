@@ -1,10 +1,10 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
 from app import app, db
-from app.forms import DeleteAccountForm, ConfirmForm
+from app.main.forms import DeleteAccountForm, ConfirmForm
 from app.models import User
 from app.email import send_email
-from models import delete_user
+from app.models import delete_user
 
 
 @app.route('/')
