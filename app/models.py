@@ -1,6 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from app import app, login, db
+from flask import current_app
+from app import login, db
 from bson import ObjectId
 import jwt
 from time import time
@@ -53,7 +54,7 @@ class User(UserMixin):
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': str(self.id), 'exp': time() + expires_in},
-            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+            current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
     def add_favorite(self, items):
         not_added = []
@@ -112,7 +113,7 @@ class User(UserMixin):
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            id = jwt.decode(token, app.config['SECRET_KEY'],
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
         except:  # if token is expired or not valid it will return error
             return

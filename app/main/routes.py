@@ -1,20 +1,21 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, current_app
 from flask_login import current_user, login_required
-from app import app, db
+from app import db
 from app.main.forms import DeleteAccountForm, ConfirmForm
 from app.models import User
 from app.email import send_email
 from app.models import delete_user
+from app.main import bp
 
 
-@app.route('/')
-@app.route('/index')
+@bp.route('/')
+@bp.route('/index')
 def index():
     return render_template('index.html', title='Home')
 
 
-@app.route('/user/')  # TODO: proper fix for 404 error on /user/ despite login_required
-@app.route('/user/<email>', methods=['GET', 'POST'])
+@bp.route('/user/')  # TODO: proper fix for 404 error on /user/ despite login_required
+@bp.route('/user/<email>', methods=['GET', 'POST'])
 @login_required
 def user(email=None):
     if email is None:
@@ -27,7 +28,7 @@ def user(email=None):
 
     if request.method == 'POST':
         if request.form.get('favorites'):
-            if request.form['favorites'] in app.config['FAVORITES']:
+            if request.form['favorites'] in current_app.config['FAVORITES']:
                 _, not_added = user_.add_favorite([request.form['favorites']])
                 if not_added:
                     flash(request.form['favorites'] + ' was already included in your favorites')
@@ -45,22 +46,22 @@ def user(email=None):
         return redirect(url_for('user', email=current_user.email))
 
     return render_template('user.html', user=user_, games=games, gameless_fav=gameless_favorites,
-                           cur_fav=current_user.favorites_list,  mylist=app.config['FAVORITES'])
+                           cur_fav=current_user.favorites_list,  mylist=current_app.config['FAVORITES'])
 
 
-@app.route('/sport/<cur_sport>', methods=['GET', 'POST'])
+@bp.route('/sport/<cur_sport>', methods=['GET', 'POST'])
 def sport(cur_sport=None):
     return render_template('sport.html', cur_sport=cur_sport)
 
 
-@app.route('/settings', methods=['GET', 'POST'])
+@bp.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
     form = DeleteAccountForm()
     confirm_form = ConfirmForm()
     if confirm_form.yes.data:
         send_email('Account Deleted',
-                   sender=app.config['ADMINS'][0],
+                   sender=current_app.config['ADMINS'][0],
                    recipients=[current_user.email],
                    text_body=render_template('email/delete_account.txt',
                                              user=current_user),

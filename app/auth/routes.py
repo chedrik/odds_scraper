@@ -1,7 +1,7 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, current_app
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
-from app import db, app
+from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegisterForm, SetPasswordForm, ResetPasswordForm
 from app.models import User
@@ -20,7 +20,7 @@ def register():
         result = add_user_to_database(user, db.users)
         flash('You are now registered')
         send_email('Welcome!',
-                   sender=app.config['ADMINS'][0],
+                   sender=current_app.config['ADMINS'][0],
                    recipients=[user.email],
                    text_body=render_template('email/welcome.txt',
                                              user=user),
@@ -78,7 +78,7 @@ def reset_password_request():
                         password_hash=user_from_db['password_hash'], favorites=user_from_db['favorites'])
             reset_token = user_.get_reset_password_token()
             send_email('Reset Your Password',
-                       sender=app.config['ADMINS'][0],
+                       sender=current_app.config['ADMINS'][0],
                        recipients=[user_.email],
                        text_body=render_template('email/reset_password.txt',
                                                  user=user_, token=reset_token),
