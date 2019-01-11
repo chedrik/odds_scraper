@@ -43,7 +43,7 @@ def user(email=None):
             else:
                 flash('Invalid Selection')
 
-        return redirect(url_for('user', email=current_user.email))
+        return redirect(url_for('main.user', email=current_user.email))
 
     return render_template('user.html', user=user_, games=games, gameless_fav=gameless_favorites,
                            cur_fav=current_user.favorites_list,  mylist=current_app.config['FAVORITES'])
@@ -70,7 +70,7 @@ def settings():
                    )
         result = delete_user(current_user.id)
         flash('User ' + current_user.email + ' successfully removed')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     elif confirm_form.no.data:
         return render_template('settings.html', form=form)
     if form.validate_on_submit():

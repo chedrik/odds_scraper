@@ -12,7 +12,7 @@ from app.email import send_email
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = RegisterForm()
     if form.validate_on_submit():
         user = User(email=form.email.data)
@@ -34,7 +34,7 @@ def register():
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user_from_db = db.users.find_one({"email": form.email.data})
@@ -54,7 +54,7 @@ def login():
         login_user(user, remember=form.remember_me.data)
         redirect_page = request.args.get('next')
         if not redirect_page or url_parse(redirect_page).netloc != '':  # 2nd condition prevents redirect to diff site
-            redirect_page = url_for('index')
+            redirect_page = url_for('main.index')
         return redirect(redirect_page)
 
     return render_template('auth/login.html', title='Log in', form=form)
@@ -63,13 +63,13 @@ def login():
 @bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated: # should never reach due to dynamically showing logout/ login
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user_from_db = db.users.find_one({"email": form.email.data})
@@ -96,10 +96,10 @@ def reset_password_request():
 @bp.route('/reset_passowrd/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if current_user.is_authenticated:  # should never reach due to dynamically showing logout/ login
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     user = User.verify_reset_password_token(token)
     if not user:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = SetPasswordForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)
