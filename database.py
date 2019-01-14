@@ -15,6 +15,14 @@ def initialize_databases():
 def select_collection(db, sport='NBA'):
     if sport == 'NBA':
         return db.nba
+    elif sport == 'NFL':
+        return db.nfl
+    elif sport == 'CFB':
+        return db.cfb
+    elif sport == 'NHL':
+        return db.nhl
+    elif sport == 'MLB':
+        return db.mlb
     else:
         return None  # Not configured yet
 

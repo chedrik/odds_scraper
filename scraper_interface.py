@@ -7,6 +7,8 @@ import time
 def open_web_interface():
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
+    prefs = {'profile.managed_default_content_settings.images': 2}  # Load without images
+    options.add_experimental_option("prefs", prefs)
     web_driver = webdriver.Chrome('/usr/local/bin/chromedriver', options=options)  # TODO Deal with path nastiness
     return web_driver
 
@@ -27,15 +29,15 @@ def extract_game_containers(web_driver, sport='NBA'):
 
 
 def cleanup_web_interface(driver):
-    driver.close()
+    driver.quit()
 
 
-def main_loop(database):
+def main_loop(database, sport='NBA'):
     web_driver = open_web_interface()
-    game_containers = extract_game_containers(web_driver, 'NBA')
+    game_containers = extract_game_containers(web_driver, sport)
     for k in range(len(game_containers)):
         game = make_game_object(game_containers[k])
-        result = add_game_to_database(game, select_collection(database, 'NBA'))
+        result = add_game_to_database(game, select_collection(database, sport))
         string = 'Added ' + str(game.game_id) + ' at time: ' + str(datetime.datetime.now()) + ' with result: '
         print string
         print result
