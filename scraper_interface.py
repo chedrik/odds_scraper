@@ -19,10 +19,10 @@ def extract_game_containers(web_driver, sport='NBA'):
     while num_games == 0 and retry_count <= 10:
         url_to_scrape = generate_url(sport)
         web_driver.get(url_to_scrape)
-        web_driver.implicitly_wait(5)  # TODO: Trim/Extend this time
+       # web_driver.implicitly_wait(5)  # TODO: Trim/Extend this time
         big_soup = BeautifulSoup(web_driver.page_source, 'html.parser')
         game_containers = big_soup.find_all('section',
-                                            class_='coupon-content more-info')  # TODO: find out if this deals with live games
+                                            class_='coupon-content more-info')
         retry_count += 1
         num_games = len(game_containers)
     return game_containers
@@ -36,11 +36,12 @@ def main_loop(database, sport='NBA'):
     web_driver = open_web_interface()
     game_containers = extract_game_containers(web_driver, sport)
     for k in range(len(game_containers)):
-        game = make_game_object(game_containers[k])
-        result = add_game_to_database(game, select_collection(database, sport))
-        string = 'Added ' + str(game.game_id) + ' at time: ' + str(datetime.datetime.now()) + ' with result: '
-        print string
-        print result
+        if not check_game_in_progress(game_containers[k]):
+            game = make_game_object(game_containers[k])
+            result = add_game_to_database(game, select_collection(database, sport))
+            string = 'Added ' + str(game.game_id) + ' at time: ' + str(datetime.datetime.now()) + ' with result: '
+            print string
+            print result
     print ' '
     cleanup_web_interface(web_driver)
 

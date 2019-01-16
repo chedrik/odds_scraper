@@ -204,7 +204,12 @@ def make_game_object(game_tag):
     return game
 
 
-# TODO: Add print function to display all information about a game for debugging
-def display_game_information(game_object):
-   # print "Current odds information as of: " + # CUR TIME
-    pass
+def check_game_in_progress(game_tag):
+    """
+    :param game_tag: game_container from beautiful soup, to be parsed
+    :return: Boolean whether game is currently in progress. If it is, it will have live game tag
+    """
+    if 'live-game' in game_tag.parent.attrs['class']:
+        return True
+    else:
+        return False
