@@ -57,8 +57,8 @@ def get_team_names(game_tag):
     away_team, home_team = None, None
     team_tags = game_tag.find_all('span', class_='name')
     if team_tags and len(team_tags) == 2:
-        away_team = team_tags[0].text.strip()
-        home_team = team_tags[1].text.strip()
+        away_team = team_tags[0].text.strip().split(' (')[0] if '(' in team_tags[0].text else team_tags[0].text.strip()  # remove top 25 for college
+        home_team = team_tags[1].text.strip().split(' (')[0] if '(' in team_tags[1].text else team_tags[1].text.strip()
     return away_team, home_team
 
 
