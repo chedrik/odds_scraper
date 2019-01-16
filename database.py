@@ -19,6 +19,8 @@ def select_collection(db, sport='NBA'):
         return db.nfl
     elif sport == 'CFB':
         return db.cfb
+    elif sport == 'CBB':
+        return db.cbb
     elif sport == 'NHL':
         return db.nhl
     elif sport == 'MLB':
@@ -36,7 +38,7 @@ def add_game_to_database(game, db_collection):
     cur_time = datetime.datetime.utcnow()  # TODO: replace this with $currentDate, or smarter UTC time and convert to local time in flask front end implementation
 
     str_to_add = '.' + str(cur_time.day) + '.' + str(cur_time.hour)
-    post_result = db_collection.update({'game_id': game.game_id},
+    post_result = db_collection.update_one({'game_id': game.game_id},
                                     {'$set': {'update_time': cur_time, 'game_id': game.game_id},
                                      '$push': {'home_spread' + str_to_add: [str(cur_time.minute), game.home_spread],
                                                'away_spread' + str_to_add: [str(cur_time.minute), game.away_spread],
@@ -46,24 +48,33 @@ def add_game_to_database(game, db_collection):
                                                'under' + str_to_add: [str(cur_time.minute), game.under]}
                                      }, upsert=True)
 
-    return post_result
+    return check_post_sucess(post_result)
 
 
 def add_user_to_database(user, db_collection):
-    post_result = db_collection.update({'email': user.email},
+    post_result = db_collection.update_one({'email': user.email},
                                     {'$set': {'email': user.email,
                                               'password_hash': user.password_hash,
                                               'favorites': user.favorites},
                                      }, upsert=True)
 
-    return post_result
+    return check_post_sucess(post_result)
 
 
 def add_user_favorites(user, db_collection):
-    post_result = db_collection.update({'email': user.email},
+    post_result = db_collection.update_one({'email': user.email},
                                     {'$set': {'favorites': user.favorites},
                                      }, upsert=True)
-    return post_result
+    print post_result
+    print type(post_result)
+    return check_post_sucess(post_result)
+
+
+def check_post_sucess(post_result):
+    if post_result.modified_count == 0 and post_result.upserted_id is None:
+        return False
+    else:
+        return True
 
 
 def print_all_databases(client):

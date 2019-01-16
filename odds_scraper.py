@@ -17,6 +17,7 @@ def generate_url(sport):
         "MLB": "https://www.bovada.lv/sports/baseball/mlb",
         "NFL": "https://www.bovada.lv/sports/football/nfl",
         "CFB": "https://www.bovada.lv/sports/football/college-football",
+        "CBB": "https://www.bovada.lv/sports/basketball/college-basketball",
         "NBA": "https://www.bovada.lv/sports/basketball/nba",
         "NHL": "https://www.bovada.lv/sports/hockey/nhl",
         # "SCR": "https://www.sportsbookreview.com/betting-odds/soccer/"  # TODO: what level of soccer to support

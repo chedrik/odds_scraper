@@ -42,7 +42,7 @@ class Config(object):
                 'San Antonio Spurs',
                 'Toronto Raptors',
                 'Utah Jazz',
-                'Washington Wizards',              'Washington Wizards',
+                'Washington Wizards',
                 'Anaheim Ducks',
                 'Arizona Coyotes',
                 'Boston Bruins',
@@ -81,5 +81,7 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['gambling.odds@gmail.com']
+
+    SUPPORTED_SPORTS = ['NBA', 'NHL']
     #DB_URI = os.environ.get('DATABASE_URL') or os.path.join(basedir, 'app.db')
     # TODO: clean out venv and then requirements.txt

@@ -1,6 +1,7 @@
 from odds_scraper import *
 from selenium import webdriver
 from database import *
+from config import Config
 import time
 
 
@@ -32,7 +33,23 @@ def cleanup_web_interface(driver):
     driver.quit()
 
 
-def main_loop(database, sport='NBA'):
+def fetch_all_odds(db):
+    web_driver = open_web_interface()
+    fault_flag = False
+    for sport in Config.SUPPORTED_SPORTS:
+        game_containers = extract_game_containers(web_driver, sport)
+        for k in range(len(game_containers)):
+            if not check_game_in_progress(game_containers[k]):
+                game = make_game_object(game_containers[k])
+                result = add_game_to_database(game, select_collection(db, sport))
+                if result is False:
+                    fault_flag = True
+
+    cleanup_web_interface(web_driver)
+    return fault_flag
+
+
+def main_test_loop(database, sport='CBB'):  # FOR TESTING ONLY
     web_driver = open_web_interface()
     game_containers = extract_game_containers(web_driver, sport)
     for k in range(len(game_containers)):
@@ -47,7 +64,9 @@ def main_loop(database, sport='NBA'):
 
 
 if __name__ == '__main__':
+
     while True:
         client, db = initialize_databases()
-        main_loop(db)
+        #fetch_all_odds(db)
+        main_test_loop(db)
         time.sleep(300)
