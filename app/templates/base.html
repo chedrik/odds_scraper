@@ -15,7 +15,7 @@
             <a href="{{ url_for('main.sport', cur_sport='NBA') }}">NBA</a>
             <a href="{{ url_for('main.sport', cur_sport='CBB') }}">CBB</a>
             <a href="{{ url_for('main.sport', cur_sport='Soccer') }}">Soccer</a>
-            <a href="{{ url_for('main.sport', cur_sport='Hockey') }}">Hockey</a>
+            <a href="{{ url_for('main.sport', cur_sport='NHL') }}">NHL</a>
             {% if current_user.is_anonymous %}
             <a href="{{ url_for('auth.login') }}">Login</a>
             {% else %}
