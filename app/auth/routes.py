@@ -27,6 +27,7 @@ def register():
                    html_body=render_template('email/welcome.html',
                                              user=user)
                    )
+        current_app.logger.info(user.email + ' has registered')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Register', form=form)
 
@@ -52,6 +53,7 @@ def login():
             return redirect(url_for('auth.login'))
 
         login_user(user, remember=form.remember_me.data)
+        current_app.logger.info(user.email + ' signed in')
         redirect_page = request.args.get('next')
         if not redirect_page or url_parse(redirect_page).netloc != '':  # 2nd condition prevents redirect to diff site
             redirect_page = url_for('main.index')
@@ -62,6 +64,7 @@ def login():
 
 @bp.route('/logout')
 def logout():
+    current_app.logger.info(current_user.email + ' logged out')
     logout_user()
     return redirect(url_for('main.index'))
 
@@ -105,5 +108,6 @@ def reset_password(token):
         user.set_password(form.password.data)
         result = add_user_to_database(user, db.users)
         flash('You have successfully reset your password! Please login')
+        current_app.logger.info(user.email + ' has successfully reset their password')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)

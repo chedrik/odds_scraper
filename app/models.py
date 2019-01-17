@@ -22,6 +22,7 @@ def load_user(id):
 
 
 def delete_user(id):
+    current_app.logger.info('Deleted user: ' + id)
     return db.users.remove({'_id': ObjectId(id)})
 
 
@@ -72,6 +73,7 @@ class User(UserMixin):
                 else:
                     not_added.append(item)
         result = add_user_favorites(self, db.users)
+        current_app.logger.info(self.email + ' added favorites')
         return result, not_added
 
     def remove_favorites(self, items):  # TODO: HTML for this function
@@ -85,6 +87,7 @@ class User(UserMixin):
                     self.favorites['teams'].remove(item)
                     self.favorites_list.remove(item)
         result = add_user_favorites(self, db.users)
+        current_app.logger.info(self.email + ' removed favorites')
         return result
 
     def get_all_favorites(self):

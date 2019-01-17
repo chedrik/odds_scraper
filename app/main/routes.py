@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request, current_app
+from flask import render_template, flash, redirect, url_for, request, current_app, abort
 from flask_login import current_user, login_required
 from app import db
 from app.main.forms import DeleteAccountForm, ConfirmForm
@@ -21,6 +21,8 @@ def user(email=None):
     if email is None:
         email = current_user.email
     user_from_db = db.users.find_one({"email": email})
+    if user_from_db is None:
+        abort(404)
     user_ = User(id=user_from_db['_id'], email=user_from_db['email'],
                  password_hash=user_from_db['password_hash'], favorites=user_from_db['favorites'])
     games, gameless_favorites = user_.get_all_favorites()
@@ -51,6 +53,8 @@ def user(email=None):
 
 @bp.route('/sport/<cur_sport>', methods=['GET', 'POST'])
 def sport(cur_sport=None):
+    if cur_sport not in current_app.config['SUPPORTED_SPORTS']:
+        abort(404)
     return render_template('sport.html', cur_sport=cur_sport)
 
 
