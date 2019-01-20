@@ -2,6 +2,7 @@ from flask import Flask
 from config import Config
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from database import initialize_databases
 import logging
@@ -11,6 +12,7 @@ import os
 login = LoginManager()
 login.login_view = 'auth.login'
 mail = Mail()
+bootstrap = Bootstrap()
 moment = Moment()
 client, db = initialize_databases()  # TODO: check how this works w/ unit tests / feature factory gen
 
@@ -22,6 +24,7 @@ def create_app(config_class=Config):
 
     login.init_app(app)
     mail.init_app(app)
+    bootstrap.init_app(app)
     moment.init_app(app)
 
     from app.errors import bp as errors_bp

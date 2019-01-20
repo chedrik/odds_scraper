@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block app_content %}
     <h1>Hello, {{ current_user.email }}!</h1>
     <p>There are no upcoming games scheduled for these favorites: </p>
     {% for fave in gameless_fav %}
