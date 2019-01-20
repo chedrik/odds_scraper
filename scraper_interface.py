@@ -64,9 +64,10 @@ def main_test_loop(database, sport='CBB'):  # FOR TESTING ONLY
 
 
 if __name__ == '__main__':
-
+    client, db = initialize_databases()
     while True:
-        client, db = initialize_databases()
-        #fetch_all_odds(db)
-        main_test_loop(db)
-        time.sleep(300)
+        print 'fetching'
+        fetch_all_odds(db)
+        #main_test_loop(db)
+        print 'waiting'
+        time.sleep(120)

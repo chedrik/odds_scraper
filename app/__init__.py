@@ -5,6 +5,7 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from database import initialize_databases
+from odds_scraper import make_odds_pretty
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
@@ -21,6 +22,8 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(Config)
     app.config.update(ENV='development')
+
+    app.jinja_env.globals.update(make_odds_pretty=make_odds_pretty)
 
     login.init_app(app)
     mail.init_app(app)

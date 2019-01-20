@@ -30,16 +30,29 @@ def select_collection(db, sport='NBA'):
 
 
 def add_game_to_database(game, db_collection):
-    '''
+    """
     :param game: recordtype of game information containing id, spreads, prices, etc.
-    :param db_collecton: collection in database to add to
+    :param db_collection: collection in database to add to
     :return: results of attempt to add to collection
-    '''
-    cur_time = datetime.datetime.utcnow()  # TODO: replace this with $currentDate, or smarter UTC time and convert to local time in flask front end implementation
+    """
+    cur_time = datetime.datetime.utcnow()
 
     str_to_add = '.' + str(cur_time.day) + '.' + str(cur_time.hour)
-    post_result = db_collection.update_one({'game_id': game.game_id},
-                                    {'$set': {'update_time': cur_time, 'game_id': game.game_id},
+    post_result = db_collection.update_one({'game_id': game.game_id}, # TODO: check if none instead of only set on insert
+                                    {'$setOnInsert': {'game_id': game.game_id,
+                                                      'home_spread_init': game.home_spread,
+                                                      'away_spread_init': game.away_spread,
+                                                      'home_ml_init': game.home_ml,
+                                                      'away_ml_init': game.away_ml,
+                                                      'over_init': game.over,
+                                                      'under_init': game.under},
+                                     '$set': {'update_time': cur_time,
+                                              'home_spread_cur': game.home_spread,
+                                              'away_spread_cur': game.away_spread,
+                                              'home_ml_cur': game.home_ml,
+                                              'away_ml_cur': game.away_ml,
+                                              'over_cur': game.over,
+                                              'under_cur': game.under},
                                      '$push': {'home_spread' + str_to_add: [str(cur_time.minute), game.home_spread],
                                                'away_spread' + str_to_add: [str(cur_time.minute), game.away_spread],
                                                'home_ml' + str_to_add: [str(cur_time.minute), game.home_ml],
@@ -53,9 +66,9 @@ def add_game_to_database(game, db_collection):
 
 def add_user_to_database(user, db_collection):
     post_result = db_collection.update_one({'email': user.email},
-                                    {'$set': {'email': user.email,
-                                              'password_hash': user.password_hash,
-                                              'favorites': user.favorites},
+                                    {'$setOnInsert': {'email': user.email},
+                                     '$set': {'password_hash': user.password_hash,
+                                              'favorites': user.favorites}
                                      }, upsert=True)
 
     return check_post_sucess(post_result)
@@ -91,6 +104,8 @@ def print_all_collection_items(collection):
 def print_all_db_collections(db):
     for collection in db.collection_names():
         pprint.pprint(collection)
+
+# delete game with db.xxx.delete_many({})
 
 # def remove_old_games(game_id_list):
 #     # iterate over every document in db, and if not in current games remove to keep memory down  (FOR NOW)

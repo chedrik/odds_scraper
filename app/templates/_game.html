@@ -1,9 +1,32 @@
 <!-- sub template -->
-<table>
-    <tr valign="top">
-        <!-- TODO: extract relevant info and make this look less crap -->
-        <td>{{ game.game_id }} , current spread: {{ game.home_spread }}, current total: {{ game.over }}</td>
-    </tr>
-</table>
-<p> TEST : {{ moment(game.game_id[0]).format('LLL') }}</p>
-<p>The current date and time is: {{ moment().format('MMMM Do YYYY, h:mm:ss a') }}.</p>
+<tr>
+      <th scope="row">{{ game.game_id[0] }}</th> <!--TODO: format this time better -->
+      <td>
+          (H) {{ game.game_id[1] }} <!--HOME-- TODO: make the H & A light grey-->
+          <br>
+          (A) {{ game.game_id[2] }} <!--AWAY-->
+      </td>
+      <td>
+          {{ make_odds_pretty(game.home_spread_cur[0]) }}, {{ make_odds_pretty(game.home_spread_cur[1]|round|int) }}
+          <br>
+          {{ make_odds_pretty(game.away_spread_cur[0]) }}, {{ make_odds_pretty(game.away_spread_cur[1]|round|int) }}
+      </td>
+      <td>
+          {{ make_odds_pretty(game.home_ml_cur|round|int) }}
+          <br>
+          {{ make_odds_pretty(game.away_ml_cur|round|int) }}
+      </td>
+      <td>
+          {{ make_odds_pretty(game.over_cur[0]) }}, {{ make_odds_pretty(game.over_cur[1]|round|int) }}
+          <br>
+          {{ make_odds_pretty(game.under_cur[0]) }}, {{ make_odds_pretty(game.under_cur[1]|round|int) }}
+      </td>
+</tr>
+<!--<table class="table">-->
+    <!--<tr valign="top">-->
+        <!--&lt;!&ndash; TODO: extract relevant info and make this look less crap &ndash;&gt;-->
+        <!--<td>{{ game.game_id }} , current spread: {{ game.home_spread }}, current total: {{ game.over }}</td>-->
+    <!--</tr>-->
+<!--</table>-->
+<!--<p> TEST : {{ moment(game.game_id[0]).format('LLL') }}</p>-->
+<!--<p>The current date and time is: {{ moment().format('MMMM Do YYYY, h:mm:ss a') }}.</p>-->

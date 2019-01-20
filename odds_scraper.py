@@ -214,3 +214,12 @@ def check_game_in_progress(game_tag):
         return True
     else:
         return False
+
+
+def make_odds_pretty(odds):
+    if odds is None:
+        return odds
+    elif odds > 0:
+        return '+' + str(odds)
+    else:
+        return odds
