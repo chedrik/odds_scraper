@@ -12,7 +12,7 @@ class Config(object):
                 'NBA',
                 'CBB',
                 'Soccer',
-                'Hockey',
+                'NHL',
                 'Atlanta Hawks',
                 'Boston Celtics',
                 'Brooklyn Nets',

@@ -104,7 +104,7 @@ class User(UserMixin):
         for team in self.favorites['teams']:
             # TODO: determine the sport of the team
             collection = select_collection(db, 'NBA')
-            game_cursor = collection.find({'game_id': team}) # TODO: BUGFIX, doesnt find both teams, likely due to "find_one". Should iterate over cursor1
+            game_cursor = collection.find({'game_id': team})
             if game_cursor.count() > 0:
                 for game in collection.find({'game_id': team}):
                     favorites.append(game)
