@@ -1,6 +1,9 @@
 <!-- sub template -->
-<tr>
-      <th scope="row">{{ game.game_id[0] }}</th> <!--TODO: format this time better -->
+<tr class="clickable">
+      <th scope="row">
+          {{ game.game_id[0] }}
+          <button class="btn btn-primary pull-right" type="button" data-toggle="collapse" id="{{ id }}" data-target=".{{ id }}" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">+</button>
+      </th> <!--TODO: format this time better, dynamic +/- based on collapse state-->
       <td>
           (H) {{ game.game_id[1] }} <!--HOME-- TODO: make the H & A light grey-->
           <br>
@@ -21,6 +24,11 @@
           <br>
           {{ make_odds_pretty(game.under_cur[0]) }}, {{ make_odds_pretty(game.under_cur[1]|round|int) }}
       </td>
+      <tr class="collapse {{ id }}">
+          <td colspan="2">
+              This will be cool eventually I promise. Graphs and all that stuff!
+          </td>
+        </tr>
 </tr>
 <!--<table class="table">-->
     <!--<tr valign="top">-->

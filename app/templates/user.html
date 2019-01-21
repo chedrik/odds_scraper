@@ -3,7 +3,7 @@
 {% block app_content %}
 <h1>Hello, {{ current_user.email }}!</h1>
 
-<table class="table table-hover">
+<table class="table table-bordered table-hover">
     <thead>
         <tr>
           <th scope="col">Date</th>
@@ -16,7 +16,9 @@
     </thead>
     <tbody>
         {% for game in games %}
-            {% include '_game.html' %}
+            {% with id=loop.index %}
+                {% include '_game.html' %}
+            {% endwith %}
         {% endfor %}
     </tbody>
 </table>
