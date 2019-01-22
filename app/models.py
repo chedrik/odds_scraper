@@ -5,7 +5,7 @@ from app import login, db
 from bson import ObjectId
 import jwt
 from time import time
-from database import add_user_favorites, select_collection
+from database import add_user_favorites, select_collection, get_games_by_sport
 
 sports = ['NFL', 'CFB', 'NBA', 'CBB', 'Soccer', 'Hockey']
 
@@ -94,23 +94,25 @@ class User(UserMixin):
         favorites = []
         favorites_without_games = []
         for sport in self.favorites['sports']:
-            collection = select_collection(db, sport)
-            cursor = collection.find()
-            if cursor.count() > 0:
-                for game in collection.find():
-                    favorites.append(game)
-            else:
+            games = get_games_by_sport(db, sport)
+            if len(games) == 0:
                 favorites_without_games.append(sport)
+            else:
+                for game in games:
+                    if game not in favorites:  # Don't double add games if game fav + team fav
+                            favorites.append(game)
         for team in self.favorites['teams']:
             # TODO: determine the sport of the team
             collection = select_collection(db, 'NBA')
             game_cursor = collection.find({'game_id': team})
             if game_cursor.count() > 0:
                 for game in collection.find({'game_id': team}):
-                    favorites.append(game)
+                    if game not in favorites:
+                        favorites.append(game)
             else:
                 favorites_without_games.append(team)
 
+        favorites.sort(key=lambda x: x['game_id'][0])  # time order
         return favorites, favorites_without_games
 
     @staticmethod

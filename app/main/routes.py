@@ -6,6 +6,7 @@ from app.models import User
 from app.email import send_email
 from app.models import delete_user
 from app.main import bp
+from database import get_games_by_sport
 
 
 @bp.route('/')
@@ -55,7 +56,8 @@ def user(email=None):
 def sport(cur_sport=None):
     if cur_sport not in current_app.config['SUPPORTED_SPORTS']:
         abort(404)
-    return render_template('sport.html', cur_sport=cur_sport)
+    games = get_games_by_sport(db, cur_sport)
+    return render_template('sport.html', cur_sport=cur_sport, games=games)
 
 
 @bp.route('/settings', methods=['GET', 'POST'])

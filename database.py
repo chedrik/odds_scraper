@@ -90,6 +90,16 @@ def check_post_sucess(post_result):
         return True
 
 
+def get_games_by_sport(db, sport):
+    games = []
+    collection = select_collection(db, sport)
+    cursor = collection.find()
+    if cursor.count() > 0:
+        for game in collection.find():
+            games.append(game)
+
+    return games
+
 def print_all_databases(client):
     cursor = client.list_databases()
     for db in cursor:
@@ -114,4 +124,3 @@ def print_all_db_collections(db):
 #             # Delete the game from collection based on current cursor
 #             pass
 #     return
-

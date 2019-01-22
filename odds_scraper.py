@@ -219,7 +219,9 @@ def check_game_in_progress(game_tag):
 def make_odds_pretty(odds):
     if odds is None:
         return odds
-    elif odds > 0:
+    if odds.is_integer():
+        odds = int(odds)
+    if odds > 0:
         return '+' + str(odds)
     else:
-        return odds
+        return str(odds)
