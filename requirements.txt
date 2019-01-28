@@ -3,7 +3,7 @@ attrs==18.2.0
 Automat==0.7.0
 backports.functools-lru-cache==1.5
 BeautifulSoup==3.2.1
-beautifulsoup4==4.6.0
+beautifulsoup4==4.7.1
 blinker==1.4
 certifi==2018.4.16
 cffi==1.11.5
