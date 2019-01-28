@@ -35,7 +35,7 @@ kiwisolver==1.0.1
 lxml==4.2.5
 MarkupSafe==1.1.0
 matplotlib==2.2.2
-mongoengine==0.16.2
+mongoengine==0.16.3
 numpy==1.14.3
 pandas==0.23.0
 parsel==1.5.1
