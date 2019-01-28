@@ -36,7 +36,7 @@ lxml==4.2.5
 MarkupSafe==1.1.0
 matplotlib==2.2.2
 mongoengine==0.16.2
-numpy==1.14.3
+numpy==1.16.0
 pandas==0.23.0
 parsel==1.5.1
 pyasn1==0.4.4
