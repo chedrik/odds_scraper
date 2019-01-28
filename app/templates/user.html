@@ -1,15 +1,33 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <h1>Hello, {{ current_user.email }}!</h1>
+{% block app_content %}
+<h1>Hello, {{ current_user.email }}!</h1>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+          <th scope="col">Date (Local Time)</th>
+          <th scope="col">Teams</th>
+          <th scope="col">Current Spread</th>
+          <th scope="col">Current Moneyline</th>
+          <th scope="col">Current Total</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for game in games %}
+            {% with id=loop.index %}
+                {% include '_game.html' %}
+            {% endwith %}
+        {% endfor %}
+    </tbody>
+</table>
+{% if gameless_fav %}
     <p>There are no upcoming games scheduled for these favorites: </p>
     {% for fave in gameless_fav %}
         <p> {{ fave }}</p>
     {% endfor %}
-
-    {% for game in games %}
-        {% include '_game.html' %}
-    {% endfor %}
+{% endif %}
 
 <datalist id="fav_options">
     {% for item in mylist %}

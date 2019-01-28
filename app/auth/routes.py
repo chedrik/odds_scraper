@@ -44,14 +44,13 @@ def login():
                         password_hash=user_from_db['password_hash'], favorites=user_from_db['favorites'])
         else:
             user = None
-        flash('Login requested for {}, remember {}'.format(form.email.data, form.remember_me.data))
         if user is None:
             flash('Email not recognized')
             return redirect(url_for('auth.login'))
         elif not user.check_password(form.password.data):
             flash('Incorrect password')
             return redirect(url_for('auth.login'))
-
+        flash('Welcome back {} !'.format(form.email.data))
         login_user(user, remember=form.remember_me.data)
         current_app.logger.info(user.email + ' signed in')
         redirect_page = request.args.get('next')
@@ -66,6 +65,7 @@ def login():
 def logout():
     current_app.logger.info(current_user.email + ' logged out')
     logout_user()
+    flash('You have successfully logged out!')
     return redirect(url_for('main.index'))
 
 

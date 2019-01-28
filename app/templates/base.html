@@ -1,45 +1,64 @@
-<html>
-    <head>
-        {% if title %}
-        <title>{{ title }} - Odds Tracker</title>
-        {% else %}
-        <title>Welcome to Odds Tracker</title>
-        {% endif %}
-    </head>
-    <body>
-        <div> <!-- TODO: reference these to actual pages when they exist -->
-            <a href="{{ url_for('main.index') }}">Home</a>
-            <a href="{{ url_for('main.user', email=current_user.email) }}">Favorites</a>
-            <a href="{{ url_for('main.sport', cur_sport='NFL') }}">NFL</a>
-            <a href="{{ url_for('main.sport', cur_sport='CFB') }}">CFB</a>
-            <a href="{{ url_for('main.sport', cur_sport='NBA') }}">NBA</a>
-            <a href="{{ url_for('main.sport', cur_sport='CBB') }}">CBB</a>
-            <a href="{{ url_for('main.sport', cur_sport='Soccer') }}">Soccer</a>
-            <a href="{{ url_for('main.sport', cur_sport='NHL') }}">NHL</a>
-            {% if current_user.is_anonymous %}
-            <a href="{{ url_for('auth.login') }}">Login</a>
-            {% else %}
-            <a href="{{ url_for('main.settings') }}">Settings</a>
-            <a href="{{ url_for('auth.logout') }}">Logout</a>
-            {% endif %}
-        </div>
-        <hr>
-        <!-- popups -->
-        {% with messages = get_flashed_messages() %}
+{% extends 'bootstrap/base.html' %}
+{% block title %}
+    {% if title %}
+        {{ title }} - Odds Tracker
+    {% else %}
+        Welcome to Odds Tracker
+    {% endif %}
+{% endblock %}
+
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse ">
+            <div class="navbar-header"> <!--TODO: better collapse response -->
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar_collapse" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">POOPIE</a>
+                <!--TODO: actual name / logo that is not poopie-->
+            </div>
+            <div class="collapse navbar-collapse" id="navbar_collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.user', email=current_user.email) }}">Favorites</a></li>
+                    <li><a href="{{ url_for('main.sport', cur_sport='NFL') }}">NFL</a></li>
+                    <li><a href="{{ url_for('main.sport', cur_sport='CFB') }}">CFB</a></li>
+                    <li><a href="{{ url_for('main.sport', cur_sport='NBA') }}">NBA</a></li>
+                    <li><a href="{{ url_for('main.sport', cur_sport='CBB') }}">CBB</a></li>
+                    <li><a href="{{ url_for('main.sport', cur_sport='Soccer') }}">Soccer</a></li>
+                    <li><a href="{{ url_for('main.sport', cur_sport='NHL') }}">NHL</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_anonymous %}
+                        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('main.settings') }}">Settings</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+    <!-- popups -->
+    {% with messages = get_flashed_messages() %}
         {% if messages %}
-        <ul>
             {% for message in messages %}
-            <li> {{ message }}</li>
+                <div class="alert alert-info" role="alert">{{ message }}</div>
             {% endfor %}
-        </ul>
         {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </body>
-</html>
+    {% endwith %}
+    {% block app_content %}
+    {% endblock %}
+    </div>
+{% endblock %}
 
-
-<head>
-    {{ moment.include_jquery() }}
+{% block scripts %}
+    {{ super() }}
     {{ moment.include_moment() }}
-</head>
+{% endblock %}
