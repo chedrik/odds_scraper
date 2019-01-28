@@ -5,7 +5,7 @@ backports.functools-lru-cache==1.5
 BeautifulSoup==3.2.1
 beautifulsoup4==4.7.1
 blinker==1.4
-certifi==2018.4.16
+certifi==2018.11.29
 cffi==1.11.5
 chardet==3.0.4
 Click==7.0
