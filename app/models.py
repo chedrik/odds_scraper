@@ -1,10 +1,10 @@
+from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask import current_app
-from app import login, db
-from bson import ObjectId
 import jwt
-from time import time
+from bson import ObjectId
+from app import login, db
 from database import add_user_favorites, select_collection, get_games_by_sport
 
 sports = ['NFL', 'CFB', 'NBA', 'CBB', 'Soccer', 'Hockey']
@@ -121,5 +121,5 @@ class User(UserMixin):
             id = jwt.decode(token, current_app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
         except:  # if token is expired or not valid it will return error
-            return
+            return None
         return load_user(id)

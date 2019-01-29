@@ -1,10 +1,6 @@
-from pymongo import MongoClient
 import pprint
 import datetime
-
-
-# db_test = client.pymongo_test <-- has current nba from initall test
-# collection = db_test.tester
+from pymongo import MongoClient
 
 
 def initialize_databases():
@@ -87,9 +83,10 @@ def add_user_favorites(user, db_collection):
 
 def check_post_sucess(post_result):
     if post_result.modified_count == 0 and post_result.upserted_id is None:
-        return False
+        status = False
     else:
-        return True
+        status = True
+    return status
 
 
 def get_games_by_sport(db, sport):

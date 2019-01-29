@@ -1,14 +1,14 @@
+import logging
+import os
+from logging.handlers import SMTPHandler, RotatingFileHandler
 from flask import Flask
-from config import Config
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from config import Config
 from database import initialize_databases
 from odds_scraper import make_odds_pretty
-import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler
-import os
 
 login = LoginManager()
 login.login_view = 'auth.login'

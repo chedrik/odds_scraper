@@ -1,12 +1,12 @@
 from flask import render_template, redirect, url_for, flash, request, current_app
-from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
+from werkzeug.urls import url_parse
 from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegisterForm, SetPasswordForm, ResetPasswordForm
 from app.models import User
-from database import add_user_to_database
 from app.email import send_email
+from database import add_user_to_database
 
 
 @bp.route('/register', methods=['GET', 'POST'])
@@ -22,10 +22,8 @@ def register():
         send_email('Welcome!',
                    sender=current_app.config['ADMINS'][0],
                    recipients=[user.email],
-                   text_body=render_template('email/welcome.txt',
-                                             user=user),
-                   html_body=render_template('email/welcome.html',
-                                             user=user)
+                   text_body=render_template('email/welcome.txt', user=user),
+                   html_body=render_template('email/welcome.html', user=user)
                    )
         current_app.logger.info(user.email + ' has registered')
         return redirect(url_for('auth.login'))
@@ -83,10 +81,8 @@ def reset_password_request():
             send_email('Reset Your Password',
                        sender=current_app.config['ADMINS'][0],
                        recipients=[user_.email],
-                       text_body=render_template('email/reset_password.txt',
-                                                 user=user_, token=reset_token),
-                       html_body=render_template('email/reset_password.html',
-                                                 user=user_, token=reset_token)
+                       text_body=render_template('email/reset_password.txt', user=user_, token=reset_token),
+                       html_body=render_template('email/reset_password.html', user=user_, token=reset_token)
                        )
             flash('Check your email for reset instructions')
             return redirect(url_for('auth.login'))

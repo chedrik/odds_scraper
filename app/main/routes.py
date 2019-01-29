@@ -69,10 +69,8 @@ def settings():
         send_email('Account Deleted',
                    sender=current_app.config['ADMINS'][0],
                    recipients=[current_user.email],
-                   text_body=render_template('email/delete_account.txt',
-                                             user=current_user),
-                   html_body=render_template('email/delete_account.html',
-                                             user=current_user)
+                   text_body=render_template('email/delete_account.txt', user=current_user),
+                   html_body=render_template('email/delete_account.html', user=current_user)
                    )
         result = delete_user(current_user.id)
         flash('User ' + current_user.email + ' successfully removed')
