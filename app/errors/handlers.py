@@ -6,10 +6,10 @@ from flask_login import current_user
 @bp.app_errorhandler(404)
 def not_found_error(error):
     if current_user.is_authenticated:
-        str = current_user.email
+        str_for_log = current_user.email
     else:
-        str = 'Anonymous user'
-    current_app.logger.info(str + ' attempted to access the following URL and failed: ' + request.url)
+        str_for_log = 'Anonymous user'
+    current_app.logger.info(str_for_log + ' attempted to access the following URL and failed: ' + request.url)
     return render_template('errors/404.html'), 404
 
 

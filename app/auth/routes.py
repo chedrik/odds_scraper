@@ -71,14 +71,14 @@ def logout():
 
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
-    if current_user.is_authenticated: # should never reach due to dynamically showing logout/ login
+    if current_user.is_authenticated:  # should never reach due to dynamically showing logout/ login
         return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user_from_db = db.users.find_one({"email": form.email.data})
         if user_from_db:
             user_ = User(id=user_from_db['_id'], email=user_from_db['email'],
-                        password_hash=user_from_db['password_hash'], favorites=user_from_db['favorites'])
+                         password_hash=user_from_db['password_hash'], favorites=user_from_db['favorites'])
             reset_token = user_.get_reset_password_token()
             send_email('Reset Your Password',
                        sender=current_app.config['ADMINS'][0],

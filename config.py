@@ -7,7 +7,7 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'fake_key'
-    FAVORITES =['NFL',
+    FAVORITES = ['NFL',
                 'CFB',
                 'NBA',
                 'CBB',
@@ -83,5 +83,5 @@ class Config(object):
     ADMINS = ['gambling.odds@gmail.com']
 
     SUPPORTED_SPORTS = ['NBA', 'NHL']
-    #DB_URI = os.environ.get('DATABASE_URL') or os.path.join(basedir, 'app.db')
+    # DB_URI = os.environ.get('DATABASE_URL') or os.path.join(basedir, 'app.db')
     # TODO: clean out venv and then requirements.txt

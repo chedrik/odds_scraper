@@ -17,10 +17,11 @@ def open_web_interface():
 def extract_game_containers(web_driver, sport='NBA'):
     retry_count = 0
     num_games = 0
+    game_containers = None
     while num_games == 0 and retry_count <= 10:
         url_to_scrape = generate_url(sport)
         web_driver.get(url_to_scrape)
-       # web_driver.implicitly_wait(5)  # TODO: Trim/Extend this time
+        # web_driver.implicitly_wait(5)  # TODO: Trim/Extend this time
         big_soup = BeautifulSoup(web_driver.page_source, 'html.parser')
         game_containers = big_soup.find_all('section',
                                             class_='coupon-content more-info')
@@ -68,6 +69,6 @@ if __name__ == '__main__':
     while True:
         print 'fetching'
         fetch_all_odds(db)
-        #main_test_loop(db)
+        # main_test_loop(db)
         print 'waiting'
         time.sleep(120)

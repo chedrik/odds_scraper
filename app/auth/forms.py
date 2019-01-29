@@ -17,6 +17,7 @@ class RegisterForm(FlaskForm):
     password_check = PasswordField('Reenter Password', validators=[DataRequired(), EqualTo('password')])
     register = SubmitField('Register')
 
+    # noinspection PyMethodMayBeStatic
     def validate_email(self, email):  # custom validator auto-applied to email
         user_from_db = db.users.find_one({"email": email.data})
         if user_from_db is not None:

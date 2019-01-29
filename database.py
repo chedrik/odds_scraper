@@ -2,6 +2,7 @@ from pymongo import MongoClient
 import pprint
 import datetime
 
+
 # db_test = client.pymongo_test <-- has current nba from initall test
 # collection = db_test.tester
 
@@ -38,46 +39,47 @@ def add_game_to_database(game, db_collection):
     cur_time = datetime.datetime.utcnow()
 
     str_to_add = '.' + str(cur_time.day) + '.' + str(cur_time.hour)
-    post_result = db_collection.update_one({'game_id': game.game_id}, # TODO: check if none instead of only set on insert
-                                    {'$setOnInsert': {'game_id': game.game_id,
-                                                      'home_spread_init': game.home_spread,
-                                                      'away_spread_init': game.away_spread,
-                                                      'home_ml_init': game.home_ml,
-                                                      'away_ml_init': game.away_ml,
-                                                      'over_init': game.over,
-                                                      'under_init': game.under},
-                                     '$set': {'update_time': cur_time,
-                                              'home_spread_cur': game.home_spread,
-                                              'away_spread_cur': game.away_spread,
-                                              'home_ml_cur': game.home_ml,
-                                              'away_ml_cur': game.away_ml,
-                                              'over_cur': game.over,
-                                              'under_cur': game.under},
-                                     '$push': {'home_spread' + str_to_add: [str(cur_time.minute), game.home_spread],
-                                               'away_spread' + str_to_add: [str(cur_time.minute), game.away_spread],
-                                               'home_ml' + str_to_add: [str(cur_time.minute), game.home_ml],
-                                               'away_ml' + str_to_add: [str(cur_time.minute), game.away_ml],
-                                               'over' + str_to_add: [str(cur_time.minute), game.over],
-                                               'under' + str_to_add: [str(cur_time.minute), game.under]}
-                                     }, upsert=True)
+    post_result = db_collection.update_one({'game_id': game.game_id},  # TODO: check if none instead of set on insert
+                                           {'$setOnInsert': {'game_id': game.game_id,
+                                                             'home_spread_init': game.home_spread,
+                                                             'away_spread_init': game.away_spread,
+                                                             'home_ml_init': game.home_ml,
+                                                             'away_ml_init': game.away_ml,
+                                                             'over_init': game.over,
+                                                             'under_init': game.under},
+                                            '$set': {'update_time': cur_time,
+                                                     'home_spread_cur': game.home_spread,
+                                                     'away_spread_cur': game.away_spread,
+                                                     'home_ml_cur': game.home_ml,
+                                                     'away_ml_cur': game.away_ml,
+                                                     'over_cur': game.over,
+                                                     'under_cur': game.under},
+                                            '$push': {
+                                                'home_spread' + str_to_add: [str(cur_time.minute), game.home_spread],
+                                                'away_spread' + str_to_add: [str(cur_time.minute), game.away_spread],
+                                                'home_ml' + str_to_add: [str(cur_time.minute), game.home_ml],
+                                                'away_ml' + str_to_add: [str(cur_time.minute), game.away_ml],
+                                                'over' + str_to_add: [str(cur_time.minute), game.over],
+                                                'under' + str_to_add: [str(cur_time.minute), game.under]}
+                                            }, upsert=True)
 
     return check_post_sucess(post_result)
 
 
 def add_user_to_database(user, db_collection):
     post_result = db_collection.update_one({'email': user.email},
-                                    {'$setOnInsert': {'email': user.email},
-                                     '$set': {'password_hash': user.password_hash,
-                                              'favorites': user.favorites}
-                                     }, upsert=True)
+                                           {'$setOnInsert': {'email': user.email},
+                                            '$set': {'password_hash': user.password_hash,
+                                                     'favorites': user.favorites}
+                                            }, upsert=True)
 
     return check_post_sucess(post_result)
 
 
 def add_user_favorites(user, db_collection):
     post_result = db_collection.update_one({'email': user.email},
-                                    {'$set': {'favorites': user.favorites},
-                                     }, upsert=True)
+                                           {'$set': {'favorites': user.favorites},
+                                            }, upsert=True)
     print post_result
     print type(post_result)
     return check_post_sucess(post_result)
@@ -99,6 +101,7 @@ def get_games_by_sport(db, sport):
             games.append(game)
 
     return games
+
 
 def print_all_databases(client):
     cursor = client.list_databases()

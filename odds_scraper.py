@@ -1,8 +1,4 @@
-import requests
-from bs4 import BeautifulSoup
-from time import sleep
 from recordtype import recordtype
-from selenium import webdriver
 from dateutil.parser import parse
 import pytz
 
@@ -10,7 +6,6 @@ import pytz
 def generate_url(sport):
     """
     :param sport: string of sport type, supported options MLB, NFL, CFB, NBA, NHL, SCR (soccer)
-    :param line_type: string of wager type, supported options totals, ML, spread
     :return: url of webpage to scrape, None if unsupported
     """
     url_dict = {
@@ -57,7 +52,7 @@ def get_team_names(game_tag):
     away_team, home_team = None, None
     team_tags = game_tag.find_all('span', class_='name')
     if team_tags and len(team_tags) == 2:
-        away_team = team_tags[0].text.strip().split(' (')[0] if '(' in team_tags[0].text else team_tags[0].text.strip()  # remove top 25 for college
+        away_team = team_tags[0].text.strip().split(' (')[0] if '(' in team_tags[0].text else team_tags[0].text.strip()
         home_team = team_tags[1].text.strip().split(' (')[0] if '(' in team_tags[1].text else team_tags[1].text.strip()
     return away_team, home_team
 
@@ -143,8 +138,10 @@ def check_has_lines(game_tag):  # TODO: This is ugly.  Come up with better way t
     :return: recordtpe containing all parsed line information
     """
     # check whether all lines are there or not and return the found tag if so
-    Lines = recordtype('Lines', 'spread moneyline total prices has_spread has_moneyline has_total') # TODO: move this out of function
-    lines = Lines(spread=None, moneyline=None, total=None, prices=None, has_spread=False, has_moneyline=False, has_total=False)
+    # TODO: move this out of function
+    Lines = recordtype('Lines', 'spread moneyline total prices has_spread has_moneyline has_total')
+    lines = Lines(spread=None, moneyline=None, total=None, prices=None, has_spread=False, has_moneyline=False,
+                  has_total=False)
 
     lines.spread = game_tag.find_all('span', class_='market-line bet-handicap')
     lines.total = game_tag.find_all('span', class_='market-line bet-handicap both-handicaps')
@@ -154,7 +151,7 @@ def check_has_lines(game_tag):  # TODO: This is ugly.  Come up with better way t
         price = lines.prices[k].text
         if '(' in price:
             for char in ['(', ')']:
-                price = price.replace(char,'')
+                price = price.replace(char, '')
         lines.prices[k] = price
 
     num_prices = len(lines.prices)
@@ -199,7 +196,8 @@ def make_game_object(game_tag):
     over, under = get_game_total(game_lines)
 
     game_id = (game_datetime, home_team, away_team)
-    Game = recordtype('Game', 'game_id away_spread home_spread away_ml home_ml over under')  # TODO: move this out of function
+    # TODO: move this out of function
+    Game = recordtype('Game', 'game_id away_spread home_spread away_ml home_ml over under')
     game = Game(game_id=game_id, away_spread=away_spread, home_spread=home_spread,
                 away_ml=away_ml, home_ml=home_ml, over=over, under=under)
     return game
