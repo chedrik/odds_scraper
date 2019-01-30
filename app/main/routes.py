@@ -63,6 +63,9 @@ def sport(cur_sport=None):
 @bp.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
+    from app.tasks import *
+    launch_task(example,5)
+
     form = DeleteAccountForm()
     confirm_form = ConfirmForm()
     if confirm_form.yes.data:
