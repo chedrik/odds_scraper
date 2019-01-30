@@ -64,7 +64,7 @@ def sport(cur_sport=None):
 @login_required
 def settings():
     from app.tasks import *
-    launch_task(example,5)
+    launch_task('example',5)
 
     form = DeleteAccountForm()
     confirm_form = ConfirmForm()
