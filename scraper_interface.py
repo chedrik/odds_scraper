@@ -1,5 +1,6 @@
 from odds_scraper import *
 from selenium import webdriver
+from bs4 import BeautifulSoup
 from database import *
 from config import Config
 import time
