@@ -1,3 +1,5 @@
+import sys
+import time
 from rq import get_current_job
 from flask import current_app
 from scraper_interface import initialize_databases, fetch_all_odds
@@ -8,12 +10,18 @@ def launch_task(func_name, *args, **kwargs):
     return rq_job
 
 
-def fetch_odds():
-    job = get_current_job()
-    job.save_meta()  # needed?
-    client, db = initialize_databases()
-    job.meta['status'] = 'fetching'
-    print 'fetching'
-    fetch_all_odds(db)
-    print 'waiting'
-    job.meta['status'] = 'waiting'
+def fetch_odds():  # TODO: verify when connected to internet
+    try:
+        while True:
+            job = get_current_job()
+            job.save_meta()  # needed?
+            client, db = initialize_databases()
+            job.meta['status'] = 'fetching'
+            print 'fetching'
+            fetch_all_odds(db)
+            print 'waiting'
+            job.meta['status'] = 'waiting'
+            time.sleep(3)
+    except:
+        current_app.logger.error('Unhandled exception in RQ', exc_info=sys.exc_info())  # TODO: check this works
+

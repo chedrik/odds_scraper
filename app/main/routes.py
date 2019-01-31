@@ -6,7 +6,6 @@ from app.models import User
 from app.email import send_email
 from app.models import delete_user
 from app.main import bp
-from app.tasks import launch_task
 from database import get_games_by_sport
 
 
@@ -64,8 +63,6 @@ def sport(cur_sport=None):
 @bp.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    temp = launch_task('fetch_odds')
-
     form = DeleteAccountForm()
     confirm_form = ConfirmForm()
     if confirm_form.yes.data:

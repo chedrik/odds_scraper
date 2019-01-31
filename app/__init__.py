@@ -11,6 +11,7 @@ from redis import Redis
 from config import Config
 from database import initialize_databases
 from odds_scraper import make_odds_pretty
+from app.tasks import launch_task
 
 login = LoginManager()
 login.login_view = 'auth.login'
@@ -70,6 +71,9 @@ def create_app(config_class=Config):
     app.logger.setLevel(logging.INFO)
     app.logger.info('Started odds scraper')
 
+    app.app_context().push()
+    fetch_task = launch_task('fetch_odds')
+    
     return app
 
 
