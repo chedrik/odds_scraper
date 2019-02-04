@@ -40,6 +40,7 @@ def fetch_all_odds(db):
     fault_flag = False
     for sport in Config.SUPPORTED_SPORTS:
         game_containers = extract_game_containers(web_driver, sport)
+        print 'fetched ' + str(len(game_containers)) + ' ' + sport + ' games.'
         for k in range(len(game_containers)):
             if not check_game_in_progress(game_containers[k]):
                 game = make_game_object(game_containers[k])

@@ -34,7 +34,7 @@ def create_app(config_class=Config):
     moment.init_app(app)
 
     app.redis = Redis.from_url(app.config['REDIS_URL'])
-    app.task_queue = rq.Queue('odds-tasks', connection=app.redis)
+    app.task_queue = rq.Queue('odds-tasks', connection=app.redis, default_timeout=-1)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
@@ -71,8 +71,8 @@ def create_app(config_class=Config):
     app.logger.setLevel(logging.INFO)
     app.logger.info('Started odds scraper')
 
-    app.app_context().push()
-    fetch_task = launch_task('fetch_odds')
+    with app.app_context():
+        fetch_task = launch_task('fetch_odds')
     
     return app
 

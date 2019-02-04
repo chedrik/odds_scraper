@@ -1,4 +1,3 @@
-import sys
 import time
 from rq import get_current_job
 from flask import current_app
@@ -21,7 +20,6 @@ def fetch_odds():  # TODO: verify when connected to internet
             fetch_all_odds(db)
             print 'waiting'
             job.meta['status'] = 'waiting'
-            time.sleep(3)
-    except:
-        current_app.logger.error('Unhandled exception in RQ', exc_info=sys.exc_info())  # TODO: check this works
-
+            time.sleep(60)
+    except Exception as e: print(e)
+        # app.logger.error('Unhandled exception in RQ', exc_info=sys.exc_info())  # TODO: figure out how to get app context
