@@ -5,11 +5,22 @@ from scraper_interface import initialize_databases, fetch_all_odds
 
 
 def launch_task(func_name, *args, **kwargs):
+    """
+    Wrapper for queueing a rq task
+    :param func_name: string name of function to pass to rq worker
+    :param args: args
+    :param kwargs: kwargs
+    :return: rq_job ptr
+    """
     rq_job = current_app.task_queue.enqueue('app.tasks.' + func_name, *args, **kwargs)
     return rq_job
 
 
 def fetch_odds():  # TODO: verify when connected to internet
+    """
+    Wrapper for entire odds fetching and pausing, to run in background worker during server uptime.
+    :return: void
+    """
     try:
         while True:
             job = get_current_job()

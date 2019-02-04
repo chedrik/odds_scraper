@@ -4,12 +4,22 @@ from pymongo import MongoClient
 
 
 def initialize_databases():
+    """
+    Creates DB and client objects.
+    :return: pymongo client and bovada database
+    """
     client = MongoClient()  # Default local host
     db = client.bovadaDB
     return client, db
 
 
 def select_collection(db, sport='NBA'):
+    """
+    Gets collection name based on required sport.
+    :param db: bovada db object
+    :param sport: sport name
+    :return: pymongo collection for required sport
+    """
     if sport == 'NBA':
         return db.nba
     elif sport == 'NFL':
@@ -63,6 +73,12 @@ def add_game_to_database(game, db_collection):
 
 
 def add_user_to_database(user, db_collection):
+    """
+    Adds or updates user object to user database for tracking favorites, etc.
+    :param user: User object as defined in app/models.py
+    :param db_collection: pymongo collection for holding website users
+    :return: boolean of whether collection update was successful.
+    """
     post_result = db_collection.update_one({'email': user.email},
                                            {'$setOnInsert': {'email': user.email},
                                             '$set': {'password_hash': user.password_hash,
@@ -73,6 +89,12 @@ def add_user_to_database(user, db_collection):
 
 
 def add_user_favorites(user, db_collection):
+    """
+    Updates the favorites for a given user.
+    :param user: User object as defined in app/models.py
+    :param db_collection: pymongo collection for holding website users
+    :return: boolean of whether collection update was successful.
+    """
     post_result = db_collection.update_one({'email': user.email},
                                            {'$set': {'favorites': user.favorites},
                                             }, upsert=True)
@@ -82,6 +104,11 @@ def add_user_favorites(user, db_collection):
 
 
 def check_post_sucess(post_result):
+    """
+    Generic database update check, which returns true if new item is added OR item is modified
+    :param post_result: pymongo post result
+    :return: boolean for successful db change
+    """
     if post_result.modified_count == 0 and post_result.upserted_id is None:
         status = False
     else:
@@ -90,6 +117,12 @@ def check_post_sucess(post_result):
 
 
 def get_games_by_sport(db, sport):
+    """
+    Fetches all database posts for a given sport
+    :param db: pymongo db object
+    :param sport: string sport name
+    :return: list of game objects fetched from database
+    """
     games = []
     collection = select_collection(db, sport)
     cursor = collection.find()
@@ -101,17 +134,32 @@ def get_games_by_sport(db, sport):
 
 
 def print_all_databases(client):
+    """
+    Helper fcn for debugging, prints all databases in pymongo client
+    :param client: pymongo client object
+    :return: void
+    """
     cursor = client.list_databases()
     for db in cursor:
         print db
 
 
 def print_all_collection_items(collection):
+    """
+    Helper fcn for debugging, prints all posts in a db
+    :param collection: pymongo collection
+    :return: void
+    """
     for item in collection.find():
         pprint.pprint(item)
 
 
 def print_all_db_collections(db):
+    """
+    Helper fcn for debugging, prints all collections in a db.
+    :param db: pymongo db object
+    :return: void
+    """
     for collection in db.collection_names():
         pprint.pprint(collection)
 

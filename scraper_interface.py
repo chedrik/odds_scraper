@@ -7,6 +7,10 @@ import time
 
 
 def open_web_interface():
+    """
+    Starts headless chrome interface.
+    :return: selenium web driver object
+    """
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     prefs = {'profile.managed_default_content_settings.images': 2}  # Load without images
@@ -16,6 +20,12 @@ def open_web_interface():
 
 
 def extract_game_containers(web_driver, sport='NBA'):
+    """
+    Parse out info for a given sport and return a list of game htmls to parse further
+    :param web_driver: selenium driver for navigating
+    :param sport: sport name for generating correct URL to parse
+    :return:  list of html where each item in list corresponds to a single game.
+    """
     retry_count = 0
     num_games = 0
     game_containers = None
@@ -32,10 +42,20 @@ def extract_game_containers(web_driver, sport='NBA'):
 
 
 def cleanup_web_interface(driver):
+    """
+    Close web interface to prevent resource use.
+    :param driver: selenium web driver
+    :return: void
+    """
     driver.quit()
 
 
 def fetch_all_odds(db):
+    """
+    Get odds of every sport and add them to appropriate collection in db
+    :param db: pymongo database object
+    :return: fault flag boolean whether process was a success
+    """
     web_driver = open_web_interface()
     fault_flag = False
     for sport in Config.SUPPORTED_SPORTS:

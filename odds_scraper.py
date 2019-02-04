@@ -215,6 +215,11 @@ def check_game_in_progress(game_tag):
 
 
 def make_odds_pretty(odds):
+    """
+    Convert odds for display by adding +/- and rounding
+    :param odds: float of game odds
+    :return: odds string of odds for display
+    """
     if odds is None:
         return odds
     if odds.is_integer():
