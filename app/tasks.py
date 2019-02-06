@@ -16,7 +16,7 @@ def launch_task(func_name, *args, **kwargs):
     return rq_job
 
 
-def fetch_odds():  # TODO: verify when connected to internet
+def fetch_odds():
     """
     Wrapper for entire odds fetching and pausing, to run in background worker during server uptime.
     :return: void

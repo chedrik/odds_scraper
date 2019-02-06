@@ -76,7 +76,7 @@ class User(UserMixin):
         current_app.logger.info(self.email + ' added favorites')
         return result, not_added
 
-    def remove_favorites(self, items):  # TODO: HTML for this function
+    def remove_favorites(self, items):
         for item in items:
             if item in sports:
                 if item in self.favorites['sports']:
