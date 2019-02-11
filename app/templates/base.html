@@ -44,6 +44,8 @@
 {% endblock %}
 
 {% block content %}
+<meta http-equiv="refresh" content="300"> <!-- Refresh every 5 minutes, hack for no websocket. TODO: actual ajax / websocket-->
+
     <div class="container">
     <!-- popups -->
     {% with messages = get_flashed_messages() %}

@@ -2,6 +2,7 @@ from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask import current_app
+from datetime import datetime
 import jwt
 from bson import ObjectId
 from app import login, db
@@ -112,7 +113,7 @@ class User(UserMixin):
             else:
                 favorites_without_games.append(team)
 
-        favorites.sort(key=lambda x: x['game_id'][0])  # time order
+        favorites.sort(key=lambda x: x['game_id'][0] or datetime.min)  # time order
         return favorites, favorites_without_games
 
     @staticmethod

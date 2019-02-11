@@ -222,7 +222,7 @@ def make_odds_pretty(odds):
     """
     if odds is None:
         return odds
-    if odds.is_integer():
+    if (odds / 1.0).is_integer():  # hack to convert int -> float
         odds = int(odds)
     if odds > 0:
         return '+' + str(odds)
