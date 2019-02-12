@@ -7,6 +7,8 @@ from app.email import send_email
 from app.models import delete_user
 from app.main import bp
 from database import get_games_by_sport
+from plotters import make_plot
+from bokeh.embed import components
 
 
 @bp.route('/')
@@ -47,9 +49,12 @@ def user(email=None):
                 flash('Invalid Selection')
 
         return redirect(url_for('main.user', email=current_user.email))
+    p = make_plot()
+    script, div = components(p)
 
     return render_template('user.html', user=user_, games=games, gameless_fav=gameless_favorites,
-                           cur_fav=current_user.favorites_list,  mylist=current_app.config['FAVORITES'])
+                           cur_fav=current_user.favorites_list,  mylist=current_app.config['FAVORITES'],
+                           script=script, div=div)
 
 
 @bp.route('/sport/<cur_sport>', methods=['GET', 'POST'])
@@ -57,7 +62,9 @@ def sport(cur_sport=None):
     if cur_sport not in current_app.config['SUPPORTED_SPORTS']:
         abort(404)
     games = get_games_by_sport(db, cur_sport)
-    return render_template('sport.html', cur_sport=cur_sport, games=games)
+    p = make_plot()
+    script, div = components(p)
+    return render_template('sport.html', cur_sport=cur_sport, games=games, script=script, div=div)
 
 
 @bp.route('/settings', methods=['GET', 'POST'])

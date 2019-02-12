@@ -2,23 +2,28 @@
 
 {% block app_content %}
     <h1>{{ cur_sport }}</h1>
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-          <th scope="col">Date (Local Time)</th>
-          <th scope="col">Teams</th>
-          <th scope="col">Current Spread</th>
-          <th scope="col">Current Moneyline</th>
-          <th scope="col">Current Total</th>
+<head>
+    {{ script|safe }}
+</head>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+              <th scope="col">Date (Local Time)</th>
+              <th scope="col">Teams</th>
+              <th scope="col">Current Spread</th>
+              <th scope="col">Current Moneyline</th>
+              <th scope="col">Current Total</th>
 
-        </tr>
-    </thead>
-    <tbody>
-        {% for game in games %}
-            {% with id=loop.index %}
-                {% include '_game.html' %}
-            {% endwith %}
-        {% endfor %}
-    </tbody>
-</table>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+                {% with id=loop.index %} {# TODO: figure out if this should be indexed 0 or not #}
+                {% with cur_div=div[loop.index0] %}
+                    {% include '_game.html' %}
+                {% endwith %}
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -63,4 +63,8 @@
 {% block scripts %}
     {{ super() }}
     {{ moment.include_moment() }}
+<link
+    href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.css"
+    rel="stylesheet" type="text/css">
+<script src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.js"></script>
 {% endblock %}
