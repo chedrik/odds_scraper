@@ -1,3 +1,7 @@
+import json
+import datetime  # for eval
+from bson import ObjectId  # for eval
+from bokeh.embed import json_item
 from flask import render_template, flash, redirect, url_for, request, current_app, abort
 from flask_login import current_user, login_required
 from app import db
@@ -49,11 +53,8 @@ def user(email=None):
                 flash('Invalid Selection')
 
         return redirect(url_for('main.user', email=current_user.email))
-    p = make_plot(games)
-    script, div = components(p)
     return render_template('user.html', user=user_, games=games, gameless_fav=gameless_favorites,
-                           cur_fav=current_user.favorites_list,  mylist=current_app.config['FAVORITES'],
-                           script=script, div=div)
+                           cur_fav=current_user.favorites_list,  mylist=current_app.config['FAVORITES'])
 
 
 @bp.route('/sport/<cur_sport>', methods=['GET', 'POST'])
@@ -61,9 +62,7 @@ def sport(cur_sport=None):
     if cur_sport not in current_app.config['SUPPORTED_SPORTS']:
         abort(404)
     games = get_games_by_sport(db, cur_sport)
-    p = make_plot(games)
-    script, div = components(p)
-    return render_template('sport.html', cur_sport=cur_sport, games=games, script=script, div=div)
+    return render_template('sport.html', cur_sport=cur_sport, games=games)
 
 
 @bp.route('/settings', methods=['GET', 'POST'])
@@ -86,3 +85,12 @@ def settings():
     if form.validate_on_submit():
         return render_template('settings.html', form=form, confirm_form=confirm_form)
     return render_template('settings.html', form=form)
+
+
+@bp.route('/plot', methods=['POST'])
+def plot():
+    if request.method == 'POST':
+        game = eval(request.form['game'])  # converts unicode -> dictionary
+        p = make_plot(game)
+
+    return json.dumps(json_item(p))
