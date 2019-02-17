@@ -1,9 +1,14 @@
 <!-- sub template -->
 <!--suppress Annotator -->
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='test.js') }}" ></script>
+</head>
+
 <tr class="clickable">
       <th scope="row">
           {{ moment(game.game_id[0]).format('llll') }}
-          <button class="btn btn-primary pull-right" type="button" data-toggle="collapse" id="{{ id }}" data-target=".{{ id }}" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">+</button>
+          <button class="btn btn-primary pull-right" type="button" data-toggle="collapse" id="game{{ id }}" data-target=".{{ id }}" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">+</button>
       </th> <!--TODO: format this time better, dynamic +/- based on collapse state-->
       <td>
           (H) {{ game.game_id[1] }} <!--HOME-- TODO: make the H & A light grey-->
@@ -25,11 +30,10 @@
           <br>
           {{ make_odds_pretty(game.under_cur[0]) }}, {{ make_odds_pretty(game.under_cur[1]) }}
       </td>
-      <tr class="collapse {{ id }}">
+      <tr class="collapse {{ id }}" id="collapse{{ id }}">
           <td colspan="2">
               This will be cool eventually I promise. Graphs and all that stuff!
+              {{ script|safe }}
               {{ cur_div|safe }}
           </td>
       </tr>
-<!--<p> TEST : {{ moment(game.game_id[0]).format('LLL') }}</p>-->
-<!--<p>The current date and time is: {{ moment().format('MMMM Do YYYY, h:mm:ss a') }}.</p>-->

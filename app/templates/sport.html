@@ -2,9 +2,6 @@
 
 {% block app_content %}
     <h1>{{ cur_sport }}</h1>
-<head>
-    {{ script|safe }}
-</head>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -20,7 +17,9 @@
             {% for game in games %}
                 {% with id=loop.index %} {# TODO: figure out if this should be indexed 0 or not #}
                 {% with cur_div=div[loop.index0] %}
+                {% with script = script[loop.index0] %}
                     {% include '_game.html' %}
+                {% endwith %}
                 {% endwith %}
                 {% endwith %}
             {% endfor %}

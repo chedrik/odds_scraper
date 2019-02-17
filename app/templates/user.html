@@ -18,9 +18,11 @@
     </thead>
     <tbody>
         {% for game in games %}
-            {% with id=loop.index %}
+            {% with id=loop.index0 %}
             {% with cur_div=div[loop.index0] %}
+            {% with script = script[loop.index0] %}
                 {% include '_game.html' %}
+            {% endwith %}
             {% endwith %}
             {% endwith %}
         {% endfor %}
