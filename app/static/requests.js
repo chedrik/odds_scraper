@@ -1,5 +1,8 @@
 $(document).ready(function(){  // waits for document to be loaded before binding
     $('button[id^="game"]').unbind("click").bind('click', function(event) {  // unbind/bind ensures only 1 click handler
+
+      //$('tr[id^="collapse"]').collapse('toggle'); // this toggles everything to switch
+      // TODO: force all others to collapse on click
       if(!$('tr[id^="collapse"]').hasClass('collapse in')) { // only build plot on click -> expand
         var words = $(this).attr('id').split(' ');
         $.ajax({
