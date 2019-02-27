@@ -11,7 +11,7 @@ $(document).ready(function(){  // waits for document to be loaded before binding
             data: { game: $(this).attr('data-game')},
             success: function(result){
                 // embed_item appends plots rather than replacing, so we need to delete the older plot
-                var plots = document.getElementById('span ' + words[1]).getElementsByClassName("bk-plot-layout bk-layout-fixed");
+                var plots = document.getElementById('span ' + words[1]).getElementsByClassName("bk-widget bk-layout-fixed");
                 if (plots.length > 0){
                     plots[0].remove()
                 }
