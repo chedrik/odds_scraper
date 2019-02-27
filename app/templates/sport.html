@@ -1,8 +1,12 @@
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='odds_fetch.js') }}" ></script>
+</head>
 {% extends "base.html" %}
 
 {% block app_content %}
     <h1>{{ cur_sport }}</h1>
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover" id="game_table">
         <thead>
             <tr>
               <th scope="col">Date (Local Time)</th>

@@ -5,7 +5,7 @@
     <script src="{{ url_for('static', filename='requests.js') }}" ></script>
 </head>
 
-<tr class="clickable">
+<tr class="clickable" data-game="{{ game }}">
       <th scope="row">
           {{ moment(game.game_id[0]).format('llll') }}
           <button class="btn btn-primary pull-right" data-game="{{ game }}" type="button" data-toggle="collapse" id="game {{ id }}" data-target=".{{ id }}" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">+</button>
@@ -35,3 +35,4 @@
               <span id="span {{ id }}"></span>
           </td>
       </tr>
+</tr>

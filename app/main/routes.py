@@ -1,6 +1,6 @@
 import json
 import datetime  # for eval
-from bson import ObjectId  # for eval
+from bson import ObjectId, json_util  # for eval
 from bokeh.embed import json_item
 from flask import render_template, flash, redirect, url_for, request, current_app, abort
 from flask_login import current_user, login_required
@@ -10,9 +10,8 @@ from app.models import User
 from app.email import send_email
 from app.models import delete_user
 from app.main import bp
-from database import get_games_by_sport
+from database import get_games_by_sport, select_collection
 from plotters import make_plot
-from bokeh.embed import components
 
 
 @bp.route('/')
@@ -92,5 +91,14 @@ def plot():
     if request.method == 'POST':
         game = eval(request.form['game'])  # converts unicode -> dictionary
         p = make_plot(game)
-
     return json.dumps(json_item(p))
+
+
+@bp.route('/odds_update', methods=['POST'])
+def odds_update():
+    if request.method == 'POST':
+        game = eval(request.form['game'])  # converts unicode -> dictionary
+        # TODO: determine the sport of the team
+        collection = select_collection(db, 'NBA')
+        db_game = collection.find_one({'game_id': game['game_id']})
+    return json.dumps(db_game, default=json_util.default)

@@ -1,52 +1,56 @@
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='odds_fetch.js') }}" ></script>
+</head>
 {% extends "base.html" %}
 
 {% block app_content %}
-<h1>Hello, {{ current_user.email }}!</h1>
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-          <th scope="col">Date (Local Time)</th>
-          <th scope="col">Teams</th>
-          <th scope="col">Current Spread</th>
-          <th scope="col">Current Moneyline</th>
-          <th scope="col">Current Total</th>
+    <h1>Hello, {{ current_user.email }}!</h1>
+    <table class="table table-bordered table-hover" id="game_table">
+        <thead>
+            <tr>
+              <th scope="col">Date (Local Time)</th>
+              <th scope="col">Teams</th>
+              <th scope="col">Current Spread</th>
+              <th scope="col">Current Moneyline</th>
+              <th scope="col">Current Total</th>
 
-        </tr>
-    </thead>
-    <tbody>
-        {% for game in games %}
-            {% with id=loop.index0 %}
-                {% include '_game.html' %}
-            {% endwith %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+                {% with id=loop.index0 %}
+                    {% include '_game.html' %}
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if gameless_fav %}
+        <p>There are no upcoming games scheduled for these favorites: </p>
+        {% for fave in gameless_fav %}
+            <p> {{ fave }}</p>
         {% endfor %}
-    </tbody>
-</table>
-{% if gameless_fav %}
-    <p>There are no upcoming games scheduled for these favorites: </p>
-    {% for fave in gameless_fav %}
-        <p> {{ fave }}</p>
-    {% endfor %}
-{% endif %}
+    {% endif %}
 
-<datalist id="fav_options">
-    {% for item in mylist %}
-    <option value="{{item}}">
-    {% endfor %}
-</datalist>
-<form method="post" action="">
-    <p>Select Favorite To Add</p>
+    <datalist id="fav_options">
+        {% for item in mylist %}
+        <option value="{{item}}">
+        {% endfor %}
+    </datalist>
+    <form method="post" action="">
+        <p>Select Favorite To Add</p>
 
-    <input type="text" name="favorites" list="fav_options">
-</form>
+        <input type="text" name="favorites" list="fav_options">
+    </form>
 
-<datalist id="current_favorites">
-    {% for item in cur_fav %}
-    <option value="{{item}}">
-    {% endfor %}
-</datalist>
-<form method="post" action="">
-    <p>Select Favorite To Remove</p>
+    <datalist id="current_favorites">
+        {% for item in cur_fav %}
+        <option value="{{item}}">
+        {% endfor %}
+    </datalist>
+    <form method="post" action="">
+        <p>Select Favorite To Remove</p>
 
-    <input type="text" name="remove_favorites" list="current_favorites">
-</form>
+        <input type="text" name="remove_favorites" list="current_favorites">
+    </form>
 {% endblock %}
