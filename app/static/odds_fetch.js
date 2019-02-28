@@ -10,10 +10,11 @@ function update_game_odds(){
             success: function(result){
                 var info_to_update = JSON.parse(result)
                 var tds = games[this.ajaxI].getElementsByTagName("td")
-                for (td_i = 1; td_i < tds.length; td_i++) {
-                    $(tds[td_i])[0].innerHTML = ////// HELP ////////
-                   {{ make_odds_pretty(game.home_spread_cur[0]) }}, {{ make_odds_pretty(game.home_spread_cur[1]) }} <br>  {{ make_odds_pretty(game.away_spread_cur[0]) }}, {{ make_odds_pretty(game.away_spread_cur[1]) }}
-                }
+                 $(tds[1])[0].innerHTML = info_to_update.home_spread[0] + ', ' + info_to_update.home_spread[1] + "<br>"
+                 $(tds[1])[0].innerHTML += info_to_update.away_spread[0] + ', ' + info_to_update.away_spread[1]
+                 $(tds[2])[0].innerHTML = info_to_update.ml[0] + "<br>" + info_to_update.ml[1]
+                 $(tds[3])[0].innerHTML = info_to_update.over[0] + ', ' + info_to_update.over[1] + "<br>"
+                 $(tds[3])[0].innerHTML += info_to_update.under[0] + ', ' + info_to_update.under[1]
             }
         })
     }

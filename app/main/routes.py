@@ -12,6 +12,7 @@ from app.models import delete_user
 from app.main import bp
 from database import get_games_by_sport, select_collection
 from plotters import make_plot
+from odds_scraper import make_odds_pretty
 
 
 @bp.route('/')
@@ -97,8 +98,15 @@ def plot():
 @bp.route('/odds_update', methods=['POST'])
 def odds_update():
     if request.method == 'POST':
-        game = eval(request.form['game'])  # converts unicode -> dictionary
+        old_game = eval(request.form['game'])  # converts unicode -> dictionary
         # TODO: determine the sport of the team
         collection = select_collection(db, 'NBA')
-        db_game = collection.find_one({'game_id': game['game_id']})
-    return json.dumps(db_game, default=json_util.default)
+        game = collection.find_one({'game_id': old_game['game_id']})
+        return_dict = {
+            'home_spread': [make_odds_pretty(game['home_spread_cur'][0]), make_odds_pretty(game['home_spread_cur'][1])],
+            'away_spread': [make_odds_pretty(game['away_spread_cur'][0]), make_odds_pretty(game['away_spread_cur'][1])],
+            'ml': [make_odds_pretty(game['home_ml_cur']), make_odds_pretty(game['away_ml_cur'])],
+            'over': [make_odds_pretty(game['over_cur'][0]), make_odds_pretty(game['over_cur'][1])],
+            'under': [make_odds_pretty(game['under_cur'][0]), make_odds_pretty(game['under_cur'][1])]}
+
+    return json.dumps(return_dict)
