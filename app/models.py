@@ -6,9 +6,9 @@ from datetime import datetime
 import jwt
 from bson import ObjectId
 from app import login, db
-from database import add_user_favorites, select_collection, get_games_by_sport
+from database import add_user_favorites, select_collection, get_games_by_sport, get_team_sport
 
-sports = ['NFL', 'CFB', 'NBA', 'CBB', 'Soccer', 'Hockey']
+sports = ['NFL', 'CFB', 'NBA', 'CBB', 'Soccer', 'Hockey', 'MLB']
 
 
 @login.user_loader
@@ -103,8 +103,10 @@ class User(UserMixin):
                     if game not in favorites:  # Don't double add games if game fav + team fav
                             favorites.append(game)
         for team in self.favorites['teams']:
-            # TODO: determine the sport of the team
-            collection = select_collection(db, 'NBA')
+            cur_sport = get_team_sport(team, db.teams)
+            if cur_sport is None:
+                continue
+            collection = select_collection(db, cur_sport)
             game_cursor = collection.find({'game_id': team})
             if game_cursor.count() > 0:
                 for game in collection.find({'game_id': team}):

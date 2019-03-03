@@ -65,6 +65,7 @@ def fetch_all_odds(db):
             if not check_game_in_progress(game_containers[k]):
                 game = make_game_object(game_containers[k])
                 result = add_game_to_database(game, select_collection(db, sport))
+                team_rank_result = update_ranks(game, db.teams)
                 if result is False:  # TODO: log to current_app.logger if this fails
                     fault_flag = True
 

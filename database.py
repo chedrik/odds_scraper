@@ -88,6 +88,49 @@ def add_user_to_database(user, db_collection):
     return check_post_sucess(post_result)
 
 
+def add_team_to_database(team, db_collection):
+    """
+    Helper fcn to initialize teams in database
+    :param team: list of name, sport
+    :param db_collection: pymongo collection for holding teams and info
+    :return: boolean of whether collection update was successful.
+    """
+    if team[1] in ['CFB', 'CBB']:
+        post_result = db_collection.insert_one({'team': team[0], 'sport': team[1], 'ranking': ''})
+    else:
+        post_result = db_collection.insert_one({'team': team[0], 'sport': team[1]})
+
+    return post_result
+
+
+def update_ranks(game, db_collection):
+    """
+    Updates the rank for teams in college
+    :param game: recordtype of game information containing id, spreads, prices, etc.
+    :param db_collection: pymongo collection for holding teams and info
+    :return: boolean of whether collection update was successful.  If not in college, returns None
+    """
+    if get_team_sport(game.game_id[1], db_collection) in ['CFB', 'CBB']:
+        home_result = db_collection.update_one({'team': game.game_id[1]},
+                                               {'$set': {'rank': game.home_rank}})
+
+        away_result = db_collection.update_one({'team': game.game_id[2]},
+                                               {'$set': {'rank': game.away_rank}})
+
+        return check_post_sucess(home_result) and check_post_sucess(away_result)
+    else:
+        return None
+
+
+def get_team_sport(team, db_collection):
+    team_db = db_collection.find_one({'team': team})
+    if team_db is None:
+        # current_app.logger.warning('No sport found for ' + team) TODO: log this
+        return None
+    else:
+        return team_db['sport']
+
+
 def add_user_favorites(user, db_collection):
     """
     Updates the favorites for a given user.

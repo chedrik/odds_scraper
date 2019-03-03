@@ -10,7 +10,7 @@ from app.models import User
 from app.email import send_email
 from app.models import delete_user
 from app.main import bp
-from database import get_games_by_sport, select_collection
+from database import get_games_by_sport, select_collection, get_team_sport
 from plotters import make_plot
 from odds_scraper import make_odds_pretty
 
@@ -99,8 +99,12 @@ def plot():
 def odds_update():
     if request.method == 'POST':
         old_game = eval(request.form['game'])  # converts unicode -> dictionary
-        # TODO: determine the sport of the team
-        collection = select_collection(db, 'NBA')
+        cur_sport = get_team_sport(old_game['game_id'][1], db.teams)
+        if cur_sport is None:
+            # log error
+            return json.dumps({})
+
+        collection = select_collection(db, cur_sport)
         game = collection.find_one({'game_id': old_game['game_id']})
         return_dict = {
             'home_spread': [make_odds_pretty(game['home_spread_cur'][0]), make_odds_pretty(game['home_spread_cur'][1])],

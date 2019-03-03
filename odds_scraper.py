@@ -47,14 +47,30 @@ def get_game_datetime(game_tag):
 def get_team_names(game_tag):
     """
     :param game_tag: game_container from beautiful soup, to be parsed
-    :return: full name of away team, full name of home team
+    :return: full name of away team, full name of home team, ranks of away, home  (empty string if not ranked)
     """
-    away_team, home_team = None, None
+    away_team, home_team, away_rank, home_rank = None, None, None, None
     team_tags = game_tag.find_all('span', class_='name')
     if team_tags and len(team_tags) == 2:
-        away_team = team_tags[0].text.strip().split(' (')[0] if '(' in team_tags[0].text else team_tags[0].text.strip()
-        home_team = team_tags[1].text.strip().split(' (')[0] if '(' in team_tags[1].text else team_tags[1].text.strip()
-    return away_team, home_team
+        away_text = team_tags[0].text
+        home_text = team_tags[1].text
+        if '(' in away_text:
+            split = away_text.strip().split(' (#')
+            away_team = split[0]
+            away_rank = split[:-1]
+        else:
+            away_team = away_text.strip()
+            away_rank = ''
+
+        if '(' in home_text:
+            split = home_text.strip().split(' (#')
+            home_team = split[0]
+            home_rank = split[:-1]
+        else:
+            home_team = home_text.strip()
+            home_rank = ''
+
+    return away_team, home_team, away_rank, home_rank
 
 
 def get_moneyline(lines):
@@ -189,7 +205,7 @@ def make_game_object(game_tag):
     """
     # main parser wrapper.... for now
     game_datetime = get_game_datetime(game_tag)
-    away_team, home_team = get_team_names(game_tag)
+    away_team, home_team, away_rank, home_rank = get_team_names(game_tag)
     game_lines = check_has_lines(game_tag)
     away_spread, home_spread = get_game_spread(game_lines)
     away_ml, home_ml = get_moneyline(game_lines)
@@ -197,9 +213,9 @@ def make_game_object(game_tag):
 
     game_id = (game_datetime, home_team, away_team)
     # TODO: move this out of function
-    Game = recordtype('Game', 'game_id away_spread home_spread away_ml home_ml over under')
+    Game = recordtype('Game', 'game_id away_spread home_spread away_ml home_ml over under ranks')
     game = Game(game_id=game_id, away_spread=away_spread, home_spread=home_spread,
-                away_ml=away_ml, home_ml=home_ml, over=over, under=under)
+                away_ml=away_ml, home_ml=home_ml, over=over, under=under, ranks=[home_rank, away_rank])
     return game
 
 
