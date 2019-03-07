@@ -2,7 +2,7 @@ import time
 from rq import get_current_job
 from flask import current_app
 from scraper_interface import initialize_databases, fetch_all_odds
-
+import os
 
 def launch_task(func_name, *args, **kwargs):
     """
@@ -25,7 +25,7 @@ def fetch_odds():
         while True:
             job = get_current_job()
             job.save_meta()  # needed?
-            client, db = initialize_databases()
+            client, db = initialize_databases(os.environ.get('MONGODB_URI')or None)
             job.meta['status'] = 'fetching'
             print 'fetching'
             fetch_all_odds(db)

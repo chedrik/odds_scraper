@@ -1,4 +1,4 @@
-from odds_scraper import *
+from scraper import *
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from database import *
@@ -13,9 +13,13 @@ def open_web_interface():
     """
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+    if Config.GOOGLE_CHROME_BIN:  # for Heroku
+        options.binary_location = Config.GOOGLE_CHROME_BIN
     prefs = {'profile.managed_default_content_settings.images': 2}  # Load without images
     options.add_experimental_option("prefs", prefs)
-    web_driver = webdriver.Chrome('/usr/local/bin/chromedriver', options=options)  # TODO Deal with path nastiness
+    web_driver = webdriver.Chrome(options=options)
     return web_driver
 
 

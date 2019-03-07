@@ -10,7 +10,7 @@ from flask_moment import Moment
 from redis import Redis
 from config import Config
 from database import initialize_databases
-from odds_scraper import make_odds_pretty
+from scraper import make_odds_pretty
 from app.tasks import launch_task
 
 login = LoginManager()
@@ -18,7 +18,7 @@ login.login_view = 'auth.login'
 mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
-client, db = initialize_databases()  # TODO: check how this works w/ unit tests / feature factory gen
+client, db = initialize_databases(os.environ.get('MONGODB_URI')or None)  # TODO: check how this works w/ unit tests / feature factory gen
 
 
 def create_app(config_class=Config):
@@ -61,13 +61,18 @@ def create_app(config_class=Config):
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
 
-    if not os.path.exists('logs'):
-        os.mkdir('logs')
-    file_handler = RotatingFileHandler('logs/odds.log', maxBytes=10240, backupCount=10)
-    file_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-    file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
+    if app.config['LOG_TO_STDOUT']:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(logging.INFO)
+        app.logger.addHandler(stream_handler)
+    else:
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
+        file_handler = RotatingFileHandler('logs/odds.log', maxBytes=10240, backupCount=10)
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.INFO)
     app.logger.info('Started odds scraper')
 

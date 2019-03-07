@@ -12,7 +12,7 @@ from app.models import delete_user
 from app.main import bp
 from database import get_games_by_sport, select_collection, get_team_sport
 from plotters import make_plot
-from odds_scraper import make_odds_pretty
+from scraper import make_odds_pretty
 
 
 @bp.route('/')

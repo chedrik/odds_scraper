@@ -1,14 +1,20 @@
 import pprint
 import datetime
 from pymongo import MongoClient
+from config import Config
 
-
-def initialize_databases():
+def initialize_databases(uri=None):
     """
     Creates DB and client objects.
     :return: pymongo client and bovada database
     """
-    client = MongoClient()  # Default local host
+    if uri is None:
+        client = MongoClient()
+    else:
+        client = MongoClient(Config.MONGODB_URI,
+                         connectTimeoutMS=30000,
+                         socketTimeoutMS=None,
+                         socketKeepAlive=True)  # Default local host
     db = client.bovadaDB
     return client, db
 
