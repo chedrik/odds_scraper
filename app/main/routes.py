@@ -60,7 +60,7 @@ def user(email=None):
 @bp.route('/sport/<cur_sport>', methods=['GET', 'POST'])
 def sport(cur_sport=None):
     if cur_sport not in current_app.config['SUPPORTED_SPORTS']:
-        abort(404)
+        return render_template('unsupported_feature.html')
     games = get_games_by_sport(db, cur_sport)
     return render_template('sport.html', cur_sport=cur_sport, games=games)
 

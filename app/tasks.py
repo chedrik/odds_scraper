@@ -4,6 +4,7 @@ from flask import current_app
 from scraper_interface import initialize_databases, fetch_all_odds
 import os
 
+
 def launch_task(func_name, *args, **kwargs):
     """
     Wrapper for queueing a rq task

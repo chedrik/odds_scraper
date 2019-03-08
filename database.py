@@ -3,6 +3,7 @@ import datetime
 from pymongo import MongoClient
 from config import Config
 
+
 def initialize_databases(uri=None):
     """
     Creates DB and client objects.
@@ -12,9 +13,9 @@ def initialize_databases(uri=None):
         client = MongoClient()
     else:
         client = MongoClient(Config.MONGODB_URI,
-                         connectTimeoutMS=30000,
-                         socketTimeoutMS=None,
-                         socketKeepAlive=True)  # Default local host
+                             connectTimeoutMS=30000,
+                             socketTimeoutMS=None,
+                             socketKeepAlive=True)  # Default local host
     db = client.bovadaDB
     return client, db
 
