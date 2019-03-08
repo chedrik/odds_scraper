@@ -20,3 +20,4 @@ bokeh==1.0.4
 
 # requirements for Heroku
 gunicorn==19.7.1
+newrelic
