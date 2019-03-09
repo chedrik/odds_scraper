@@ -12,6 +12,7 @@ class Config(object):
     MONGODB_URI = os.environ.get('MONGODB_URI') or None
     CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH') or '/usr/local/bin/chromedriver'
     GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN') or None
+    FETCH_TIME = os.environ.get('FETCH_TIME') or 300.0
 
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
     MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)

@@ -32,6 +32,6 @@ def fetch_odds():
             fetch_all_odds(db)
             print 'waiting'
             job.meta['status'] = 'waiting'
-            time.sleep(120)
+            time.sleep(os.environ.get('FETCH_TIME') or 300.0)
     except Exception as e: print(e)
         # app.logger.error('Unhandled exception in RQ', exc_info=sys.exc_info())  # TODO: figure out how to get app context
