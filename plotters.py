@@ -1,10 +1,12 @@
 from datetime import datetime
 import numpy as np
-from bokeh.plotting import figure
+from bokeh.plotting import figure, ColumnDataSource
 from bokeh.models.widgets import Panel, Tabs
+from bokeh.models import HoverTool, LinearColorMapper, ColorBar, PrintfTickFormatter, BasicTicker
+from bokeh.transform import transform
+import bokeh.palettes
 
-
-def convert_odds_to_list(game, item):  # TODO: better name for this
+def convert_odds_to_source(game, item):
     item_list = []
     item_times_list = []
     dict_items = game[item]
@@ -28,36 +30,81 @@ def convert_odds_to_list(game, item):  # TODO: better name for this
                 month = game['update_time'].month + 1 if month_wrap_idx and idx >= month_wrap_idx else game['update_time'].month
                 time = datetime(game['update_time'].year, month, day, int(hour), int(minute_data[0]))
                 item_times_list.append(time)
-
-    return np.array(item_times_list), np.array(item_list)
+    times, items = np.array(item_times_list), np.array(item_list)
+    if 'ml' in item:
+        source = ColumnDataSource(data={
+            'date': times,  # python datetime object as X axis
+            'prices': items[:, ]
+        })
+    else:
+        source = ColumnDataSource(data={
+                    'date': times,  # python datetime object as X axis
+                    'odds': items[:, 0],
+                    'prices': items[:, 1]
+                })
+    return source
 
 
 def make_plot(game):
-    # TODO: sizing, color for pricing
-    # TODO: axis ticks, smart axes
+    # TODO: dynamic plot sizing once v 1.0.5 bokeh is released and scaled_width bug is fixed
+    # define styling, tools, etc.
+    hover_tool = HoverTool(
+        tooltips=[
+            ('time', '@date{%m-%d %H:%M}'),
+            ('odds', '@odds{0.0 a}'),
+            ('price', '@prices{0.0 a}')
+        ],
+        formatters={'date': 'datetime'},
+        mode='vline'
+    )
+    hover_tool_ml = HoverTool(
+        tooltips=[
+            ('time', '@date{%m-%d %H:%M}'),
+            ('price', '@prices{0.0 a}')
+        ],
+        formatters={'date': 'datetime'},
+        mode='vline'
+    )
 
-    TOOLS = "pan,wheel_zoom,box_zoom,reset,save"  # TODO: investigate what tools are actually useful / needed
+    # this is the colormap from the original NYTimes plot
+    # colors = bokeh.palettes.Viridis256[40]
+    # nominal_mapper = LinearColorMapper(palette="Viridis256", low=-140, high=-100)
+    # #nominal_mapper = LinearColorMapper(palette=colors, low=-200, high=200)
 
-    times, items = convert_odds_to_list(game, 'home_spread')
-    spread = figure(tools=TOOLS, plot_width=300, plot_height=300, x_axis_type="datetime")
-    spread.scatter(times, items[:, 0], size=12, legend="home", color="green", alpha=0.5)
-    times, items = convert_odds_to_list(game, 'away_spread')
-    spread.scatter(times, items[:, 0], size=12, legend="away", color="red", alpha=0.5)
+    tools = "pan"
+
+    # fetch data from db as column source
+    home_spread_source = convert_odds_to_source(game, 'home_spread')
+    away_spread_source = convert_odds_to_source(game, 'away_spread')
+    home_ml_source = convert_odds_to_source(game, 'home_ml')
+    away_ml_source = convert_odds_to_source(game, 'away_ml')
+    over_source = convert_odds_to_source(game, 'over')
+    under_source = convert_odds_to_source(game, 'under')
+
+    # gen figures and add tools
+    spread = figure(tools=tools, plot_width=700, plot_height=300, x_axis_type="datetime", toolbar_location=None)
+    ml = figure(tools=tools,  plot_width=700, plot_height=300, x_axis_type="datetime", toolbar_location=None)
+    over = figure(tools=tools, plot_width=700, plot_height=300, x_axis_type="datetime", toolbar_location=None)
+    # color_bar = ColorBar(color_mapper=nominal_mapper, location=(0, 0),
+    #                      ticker=BasicTicker(desired_num_ticks=len(colors)),
+    #                      formatter=PrintfTickFormatter(format="%d%%"))
+    #
+    # spread.add_layout(color_bar, 'right')
+    spread.add_tools(hover_tool)
+    ml.add_tools(hover_tool_ml)
+    over.add_tools(hover_tool)
+
+    # scatter plots
+    # spread.scatter('date', 'odds', source=home_spread_source, fill_color=transform('prices', nominal_mapper))
+    spread.scatter('date', 'odds', source=home_spread_source)
+    spread.scatter('date', 'odds', source=away_spread_source)
+    ml.scatter('date', 'prices', source=home_ml_source)
+    ml.scatter('date', 'prices', source=away_ml_source)
+    over.scatter('date', 'odds', source=over_source)
+    over.scatter('date', 'odds', source=under_source)
+
+    # set up each figure as as tab for easy viz
     spread_tab = Panel(child=spread, title="spread")
-
-    times, items = convert_odds_to_list(game, 'home_ml')
-    ml = figure(tools=TOOLS, plot_width=300, plot_height=300, x_axis_type="datetime")
-    ml.scatter(times, items[:], size=12, legend="home", color="green", alpha=0.5)
-    times, items = convert_odds_to_list(game, 'away_ml')
-    ml.scatter(times, items[:], size=12, legend="away", color="red", alpha=0.5)
     ml_tab = Panel(child=ml, title="moneylines")
-
-    times, items = convert_odds_to_list(game, 'over')
-    over = figure(tools=TOOLS, plot_width=300, plot_height=300, x_axis_type="datetime")
-    over.scatter(times, items[:, 0], size=12, legend="over", color="green", alpha=0.5)
-    times, items = convert_odds_to_list(game, 'under')
-    over.scatter(times, items[:, 0], size=12, legend="under", color="red", alpha=0.5)
     over_tab = Panel(child=over, title="over/under")
-    p = Tabs(tabs=[spread_tab, ml_tab, over_tab])
-
-    return p
+    return Tabs(tabs=[spread_tab, ml_tab, over_tab])
