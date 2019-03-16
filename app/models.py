@@ -115,7 +115,7 @@ class User(UserMixin):
             else:
                 favorites_without_games.append(team)
 
-        favorites.sort(key=lambda x: x['game_id'][0] or datetime.min)  # time order
+        favorites.sort(key=lambda x: x['game_id'][0] or datetime.max, reverse=True)  # time order, newest first
         return favorites, favorites_without_games
 
     @staticmethod
