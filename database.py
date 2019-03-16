@@ -183,6 +183,19 @@ def get_games_by_sport(db, sport):
     return games
 
 
+def remove_old_games(db, sport):
+    # delete games that havent been updated in 1+ days
+    collection = select_collection(db, sport)
+    cursor = collection.find()
+    del_count = 0
+    if cursor.count() > 0:
+        for game in collection.find():
+            if game['game_id'][0] is not None and (datetime.datetime.utcnow() - game['game_id'][0]).days >= 1:
+                del_ob = collection.delete_one({'game_id':game['game_id']})
+                del_count += del_ob.deleted_count
+    return del_count
+
+
 def print_all_databases(client):
     """
     Helper fcn for debugging, prints all databases in pymongo client
@@ -214,11 +227,3 @@ def print_all_db_collections(db):
         pprint.pprint(collection)
 
 # delete game with db.xxx.delete_many({})
-
-# def remove_old_games(game_id_list):
-#     # iterate over every document in db, and if not in current games remove to keep memory down  (FOR NOW)
-#     for game in collection.find():
-#         if game['game_id'] not in game_id_list:
-#             # Delete the game from collection based on current cursor
-#             pass
-#     return

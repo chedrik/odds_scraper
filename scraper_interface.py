@@ -72,6 +72,8 @@ def fetch_all_odds(db):
                 team_rank_result = update_ranks(game, db.teams)
                 if result is False:  # TODO: log to current_app.logger if this fails
                     fault_flag = True
+        del_count = remove_old_games(db, sport)
+        # TODO: log to logger number of games deleted
 
     cleanup_web_interface(web_driver)
     return fault_flag
