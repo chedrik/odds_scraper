@@ -224,7 +224,7 @@ def check_game_in_progress(game_tag):
     :param game_tag: game_container from beautiful soup, to be parsed
     :return: Boolean whether game is currently in progress. If it is, it will have live game tag
     """
-    if 'live-game' in game_tag.parent.attrs['class']:
+    if 'live-game' in game_tag.parent.attrs['class'] or get_game_datetime(game_tag) is None:
         return True
     else:
         return False
