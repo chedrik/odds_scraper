@@ -24,6 +24,16 @@ class Config(object):
     SUPPORTED_SPORTS = ['NBA', 'NHL', 'MLB']
     # DB_URI = os.environ.get('DATABASE_URL') or os.path.join(basedir, 'app.db')
 
+    # Plot
+    MARKER_SIZE = 10
+    COLORS = [u'#7f0000', u'#b30000', u'#d7301f', u'#ef6548', u'#fc8d59', u'#fdbb84', u'#fdd49e', u'#252525',
+              u'#c6dbef', u'#9ecae1', u'#6baed6', u'#4292c6', u'#2171b5', u'#08519c', u'#08306b']
+    # reds = bokeh.palettes.OrRd[9][:7]
+    # blues = bokeh.palettes.Blues[9][:7]
+    # blues.reverse()  # most intense should be the best odds
+    # even = bokeh.palettes.Greys[9][1]
+    # colors = reds + [even] + blues  # 15 different colors
+
     FAVORITES = ['NFL',
                  'NBA',
                  'MLB',
