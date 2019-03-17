@@ -22,9 +22,10 @@ class Config(object):
     ADMINS = ['gambling.odds@gmail.com']
 
     SUPPORTED_SPORTS = ['NBA', 'NHL', 'MLB']
+    STEAM_THRESHOLD = 23*60  # seconds for datetime delta
     # DB_URI = os.environ.get('DATABASE_URL') or os.path.join(basedir, 'app.db')
 
-    # Plot
+    # Plot options
     MARKER_SIZE = 10
     COLORS = [u'#7f0000', u'#b30000', u'#d7301f', u'#ef6548', u'#fc8d59', u'#fdbb84', u'#fdd49e', u'#252525',
               u'#c6dbef', u'#9ecae1', u'#6baed6', u'#4292c6', u'#2171b5', u'#08519c', u'#08306b']

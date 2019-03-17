@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from config import Config
 from datetime import datetime
 
+
 def initialize_databases(uri=None):
     """
     Creates DB and client objects.
@@ -43,6 +44,62 @@ def select_collection(db, sport='NBA'):
         return None  # Not configured yet
 
 
+def check_steam(game, db_collection):
+    """
+    Checks whether the odds have changed since last update.  If the odds change more than once in Config.STEAM_THRESHOLD,
+    the steam flag is set.
+    :param game: recordtype of game information containing id, spreads, prices, etc.
+    :param db_collection: collection in database to add to
+    :return: list for each item of [time, changed_bool]
+    """
+    cur_time = datetime.datetime.utcnow()
+    game_db = db_collection.find({'game_id': game.game_id})
+    steam = False
+    if game_db is None or 'change_vector' not in game_db:  # New game, no steam
+        return [[datetime.datetime.min, False], [datetime.datetime.min, False], [datetime.datetime.min, False],
+                [datetime.datetime.min, False], [datetime.datetime.min, False], [datetime.datetime.min, False]], steam
+    else:
+        change_vector = game_db['change_vector']
+
+    if game_db['home_spread_cur'] != game.home_spread:
+        if cur_time - change_vector[0][0] < Config.STEAM_THRESHOLD:
+            steam = True
+        change_vector[0] = [cur_time, True]
+    else:
+        change_vector[0][1] = False
+    if game_db['away_spread_cur'] != game.away_spread:
+        if cur_time - change_vector[1][0] < Config.STEAM_THRESHOLD:
+            steam = True
+        change_vector[1] = [cur_time, True]
+    else:
+        change_vector[1][1] = False
+    if game_db['home_ml_cur'] != game.home_ml:
+        if cur_time - change_vector[2][0] < Config.STEAM_THRESHOLD:
+            steam = True
+        change_vector[2] = [cur_time, True]
+    else:
+        change_vector[2][1] = False
+    if game_db['away_ml_cur'] != game.away_ml:
+        if cur_time - change_vector[3][0] < Config.STEAM_THRESHOLD:
+            steam = True
+        change_vector[3] = [cur_time, True]
+    else:
+        change_vector[3][1] = False
+    if game_db['over_cur'] != game.over:
+        if cur_time - change_vector[4][0] < Config.STEAM_THRESHOLD:
+            steam = True
+        change_vector[4] = [cur_time, True]
+    else:
+        change_vector[4][1] = False
+    if game_db['under_cur'] != game.under:
+        if cur_time - change_vector[5][0] < Config.STEAM_THRESHOLD:
+            steam = True
+        change_vector[5] = [cur_time, True]
+    else:
+        change_vector[5][1] = False
+    return change_vector, steam
+
+
 def add_game_to_database(game, db_collection):
     """
     :param game: recordtype of game information containing id, spreads, prices, etc.
@@ -52,6 +109,7 @@ def add_game_to_database(game, db_collection):
     cur_time = datetime.datetime.utcnow()
 
     str_to_add = '.' + str(cur_time.day) + '.' + str(cur_time.hour)
+    change_vector, steam = check_steam(game, db_collection)
     post_result = db_collection.update_one({'game_id': game.game_id},  # TODO: check if none instead of set on insert
                                            {'$setOnInsert': {'game_id': game.game_id,
                                                              'home_spread_init': game.home_spread,
@@ -66,7 +124,9 @@ def add_game_to_database(game, db_collection):
                                                      'home_ml_cur': game.home_ml,
                                                      'away_ml_cur': game.away_ml,
                                                      'over_cur': game.over,
-                                                     'under_cur': game.under},
+                                                     'under_cur': game.under,
+                                                     'change_vector': change_vector,
+                                                     'steam': steam},
                                             '$push': {
                                                 'home_spread' + str_to_add: [str(cur_time.minute), game.home_spread],
                                                 'away_spread' + str_to_add: [str(cur_time.minute), game.away_spread],
@@ -191,7 +251,7 @@ def remove_old_games(db, sport):
     if cursor.count() > 0:
         for game in collection.find():
             if game['game_id'][0] is not None and (datetime.datetime.utcnow() - game['game_id'][0]).days >= 1:
-                del_ob = collection.delete_one({'game_id':game['game_id']})
+                del_ob = collection.delete_one({'game_id': game['game_id']})
                 del_count += del_ob.deleted_count
     return del_count
 
