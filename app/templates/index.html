@@ -1,5 +1,52 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>POOOOOO</h1>
+    {% if steam_games|length == 0 and changed_games|length == 0%}
+        <h2>When there are line changes or games being steamed, they'll show up here!</h2>
+    {% endif %}
+    {% if steam_games %}
+        <h2>Steamed Lines</h2>
+        <table class="table table-bordered table-hover" id="game_table1">
+            <thead>
+                <tr>
+                  <th scope="col">Date (Local Time)</th>
+                  <th scope="col">Teams</th>
+                  <th scope="col">Current Spread</th>
+                  <th scope="col">Current Moneyline</th>
+                  <th scope="col">Current Total</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in steam_games %}
+                    {% with id=loop.index %} {# TODO: figure out if this should be indexed 0 or not #}
+                        {% include '_game.html' %}
+                    {% endwith %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if changed_games %}
+        <h2>Recent Line Changes</h2>
+        <table class="table table-bordered table-hover" id="game_table2">
+            <thead>
+                <tr>
+                  <th scope="col">Date (Local Time)</th>
+                  <th scope="col">Teams</th>
+                  <th scope="col">Current Spread</th>
+                  <th scope="col">Current Moneyline</th>
+                  <th scope="col">Current Total</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in changed_games %}
+                    {% with id=loop.index %} {# TODO: figure out if this should be indexed 0 or not #}
+                        {% include '_game.html' %}
+                    {% endwith %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}
