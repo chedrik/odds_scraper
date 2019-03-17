@@ -2,7 +2,6 @@ import pprint
 import datetime
 from pymongo import MongoClient
 from config import Config
-from datetime import datetime
 
 
 def initialize_databases(uri=None):
