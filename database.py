@@ -239,7 +239,7 @@ def get_games_by_sport(db, sport):
     if cursor.count() > 0:
         for game in collection.find():
             games.append(game)
-    games.sort(key=lambda x: x['game_id'][0] or datetime.max, reverse=True)  # time order
+    games.sort(key=lambda x: x['game_id'][0] or datetime.datetime.max, reverse=True)  # time order
     return games
 
 
