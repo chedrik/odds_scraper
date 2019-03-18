@@ -9,6 +9,7 @@ from app import login, db
 from database import add_user_favorites, select_collection, get_games_by_sport, get_team_sport
 
 sports = ['NFL', 'CFB', 'NBA', 'CBB', 'Soccer', 'Hockey', 'MLB']
+# TODO: refactor to remove direct db queries
 
 
 @login.user_loader

@@ -7,6 +7,7 @@ from app.auth.forms import LoginForm, RegisterForm, SetPasswordForm, ResetPasswo
 from app.models import User
 from app.email import send_email
 from database import add_user_to_database
+# TODO: refactor to remove direct db queries
 
 
 @bp.route('/register', methods=['GET', 'POST'])

@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from app import db
+# TODO: refactor to remove direct db queries
 
 
 class LoginForm(FlaskForm):

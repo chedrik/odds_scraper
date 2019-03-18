@@ -10,15 +10,17 @@ from app.models import User
 from app.email import send_email
 from app.models import delete_user
 from app.main import bp
-from database import get_games_by_sport, select_collection, get_team_sport
+from database import get_games_by_sport, select_collection, get_team_sport, get_steam_games
 from plotters import make_plot
 from scraper import make_odds_pretty
+# TODO: refactor to remove direct db queries
 
 
 @bp.route('/')
 @bp.route('/index')
 def index():
-    return render_template('index.html', title='Home')
+    changed_games, steam_games = get_steam_games(db)
+    return render_template('index.html', title='Home', changed_games=changed_games, steam_games=steam_games)
 
 
 @bp.route('/user/')  # TODO: proper fix for 404 error on /user/ despite login_required
@@ -33,7 +35,6 @@ def user(email=None):
     user_ = User(id=user_from_db['_id'], email=user_from_db['email'],
                  password_hash=user_from_db['password_hash'], favorites=user_from_db['favorites'])
     games, gameless_favorites = user_.get_all_favorites()
-    # TODO: pagination?
 
     if request.method == 'POST':
         if request.form.get('favorites'):

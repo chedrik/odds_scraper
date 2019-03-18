@@ -46,7 +46,8 @@ def select_collection(db, sport='NBA'):
 def check_steam(game, db_collection):
     """
     Checks whether the odds have changed since last update.  If the odds change more than once in Config.STEAM_THRESHOLD,
-    the steam flag is set.
+    the steam flag is set.  There is a debounce time off of LINE_CHANGE_THRESHOLD, so a changed line will show up as a
+    new change for that amount of time before being set to false
     :param game: recordtype of game information containing id, spreads, prices, etc.
     :param db_collection: collection in database to add to
     :return: list for each item of [time, changed_bool]
@@ -64,37 +65,37 @@ def check_steam(game, db_collection):
         if cur_time - change_vector[0][0] < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[0] = [cur_time, True]
-    else:
+    elif cur_time - change_vector[0][0] > Config.LINE_CHANGE_THRESHOLD:
         change_vector[0][1] = False
     if game_db['away_spread_cur'] != game.away_spread:
         if cur_time - change_vector[1][0] < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[1] = [cur_time, True]
-    else:
+    elif cur_time - change_vector[1][0] > Config.LINE_CHANGE_THRESHOLD:
         change_vector[1][1] = False
     if game_db['home_ml_cur'] != game.home_ml:
         if cur_time - change_vector[2][0] < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[2] = [cur_time, True]
-    else:
+    elif cur_time - change_vector[2][0] > Config.LINE_CHANGE_THRESHOLD:
         change_vector[2][1] = False
     if game_db['away_ml_cur'] != game.away_ml:
         if cur_time - change_vector[3][0] < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[3] = [cur_time, True]
-    else:
+    elif cur_time - change_vector[3][0] > Config.LINE_CHANGE_THRESHOLD:
         change_vector[3][1] = False
     if game_db['over_cur'] != game.over:
         if cur_time - change_vector[4][0] < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[4] = [cur_time, True]
-    else:
+    elif cur_time - change_vector[4][0] > Config.LINE_CHANGE_THRESHOLD:
         change_vector[4][1] = False
     if game_db['under_cur'] != game.under:
         if cur_time - change_vector[5][0] < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[5] = [cur_time, True]
-    else:
+    elif cur_time - change_vector[5][0] > Config.LINE_CHANGE_THRESHOLD:
         change_vector[5][1] = False
     return change_vector, steam
 
@@ -238,8 +239,29 @@ def get_games_by_sport(db, sport):
     if cursor.count() > 0:
         for game in collection.find():
             games.append(game)
-    games.sort(key=lambda x: x['game_id'][0] or datetime.max, reverse=True)  # time order
+    games.sort(key=lambda x: x['game_id'][0] or datetime.datetime.max, reverse=True)  # time order
     return games
+
+
+def get_steam_games(db):
+    """
+    Gets all games that have odds that have been changed, or that are currently being steamed
+    :param db: bovada db object
+    :return: list of game objects for changed games, and steam games
+    """
+    changed_games, steam_games = [], []
+    for sport in Config.SUPPORTED_SPORTS:
+        collection = select_collection(db, sport)
+        changed_cursor = collection.find({"changed_vector": True})
+        steam_cursor = collection.find({"steam": True})
+        if changed_cursor.count() > 0:
+            for game in changed_cursor:
+                changed_games.append(game)
+        if steam_cursor.count() > 0:
+            for game in steam_cursor:
+                steam_games.append(game)
+    # TODO: sort each category by time stamp? maybe....
+    return changed_games, steam_games
 
 
 def remove_old_games(db, sport):
