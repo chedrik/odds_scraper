@@ -7,7 +7,6 @@ $(document).ready(function(){  // waits for document to be loaded before binding
       }
       if($(this).attr('clicked') == 'true') { // only build plot on click -> expand
         var words = $(this).attr('id').split(' ');
-        console.log('MADE IT')
         $.ajax({
             type: "POST",
             url: "/plot",
