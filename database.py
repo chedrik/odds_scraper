@@ -53,7 +53,7 @@ def check_steam(game, db_collection):
     :return: list for each item of [time, changed_bool]
     """
     cur_time = datetime.datetime.utcnow()
-    game_db = db_collection.find({'game_id': game.game_id})
+    game_db = db_collection.find_one({'game_id': game.game_id})
     steam = False
     if game_db is None or 'change_vector' not in game_db:  # New game, no steam
         return [[datetime.datetime.min, False], [datetime.datetime.min, False], [datetime.datetime.min, False],
@@ -62,40 +62,40 @@ def check_steam(game, db_collection):
         change_vector = game_db['change_vector']
 
     if game_db['home_spread_cur'] != game.home_spread:
-        if cur_time - change_vector[0][0] < Config.STEAM_THRESHOLD:
+        if cur_time - change_vector[0][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
             steam = True
         change_vector[0] = [cur_time, True]
-    elif cur_time - change_vector[0][0] > Config.LINE_CHANGE_THRESHOLD:
+    elif cur_time - change_vector[0][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
         change_vector[0][1] = False
     if game_db['away_spread_cur'] != game.away_spread:
-        if cur_time - change_vector[1][0] < Config.STEAM_THRESHOLD:
+        if cur_time - change_vector[1][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
             steam = True
         change_vector[1] = [cur_time, True]
-    elif cur_time - change_vector[1][0] > Config.LINE_CHANGE_THRESHOLD:
+    elif cur_time - change_vector[1][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
         change_vector[1][1] = False
     if game_db['home_ml_cur'] != game.home_ml:
-        if cur_time - change_vector[2][0] < Config.STEAM_THRESHOLD:
+        if cur_time - change_vector[2][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
             steam = True
         change_vector[2] = [cur_time, True]
-    elif cur_time - change_vector[2][0] > Config.LINE_CHANGE_THRESHOLD:
+    elif cur_time - change_vector[2][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
         change_vector[2][1] = False
     if game_db['away_ml_cur'] != game.away_ml:
-        if cur_time - change_vector[3][0] < Config.STEAM_THRESHOLD:
+        if cur_time - change_vector[3][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
             steam = True
         change_vector[3] = [cur_time, True]
-    elif cur_time - change_vector[3][0] > Config.LINE_CHANGE_THRESHOLD:
+    elif cur_time - change_vector[3][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
         change_vector[3][1] = False
     if game_db['over_cur'] != game.over:
-        if cur_time - change_vector[4][0] < Config.STEAM_THRESHOLD:
+        if cur_time - change_vector[4][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
             steam = True
         change_vector[4] = [cur_time, True]
-    elif cur_time - change_vector[4][0] > Config.LINE_CHANGE_THRESHOLD:
+    elif cur_time - change_vector[4][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
         change_vector[4][1] = False
     if game_db['under_cur'] != game.under:
-        if cur_time - change_vector[5][0] < Config.STEAM_THRESHOLD:
+        if cur_time - change_vector[5][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
             steam = True
         change_vector[5] = [cur_time, True]
-    elif cur_time - change_vector[5][0] > Config.LINE_CHANGE_THRESHOLD:
+    elif cur_time - change_vector[5][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
         change_vector[5][1] = False
     return change_vector, steam
 
