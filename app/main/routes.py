@@ -107,6 +107,9 @@ def odds_update():
 
         collection = select_collection(db, cur_sport)
         game = collection.find_one({'game_id': old_game['game_id']})
+        if game is None:
+            # log error?
+            return json.dumps({})
         return_dict = {
             'home_spread': [make_odds_pretty(game['home_spread_cur'][0]), make_odds_pretty(game['home_spread_cur'][1])],
             'away_spread': [make_odds_pretty(game['away_spread_cur'][0]), make_odds_pretty(game['away_spread_cur'][1])],
