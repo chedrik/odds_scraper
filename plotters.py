@@ -5,6 +5,7 @@ from bokeh.models.widgets import Panel, Tabs
 from bokeh.models import HoverTool, LinearColorMapper, ColorBar
 from bokeh.models.tickers import FixedTicker
 from bisect import bisect_left
+from math import isnan, isinf
 from config import Config
 
 
@@ -52,6 +53,8 @@ def generate_color_bins(prices):
     # find max and min odds for favorite and dog to dynamically interpolate between set of colors
     neg_min, neg_max, pos_min, pos_max = -95., -100000., 100000., 105.
     for price in prices:
+        if price is None or isnan(price) or isinf(price):
+            continue
         if price < 0:
             if price < neg_min:
                 neg_min = price
