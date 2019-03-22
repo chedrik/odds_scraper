@@ -62,40 +62,40 @@ def check_steam(game, db_collection):
         change_vector = game_db['change_vector']
 
     if game_db['home_spread_cur'] != game.home_spread:
-        if cur_time - change_vector[0][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
+        if (cur_time - change_vector[0][0]).seconds < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[0] = [cur_time, True]
-    elif cur_time - change_vector[0][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
+    elif (cur_time - change_vector[0][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[0][1] = False
     if game_db['away_spread_cur'] != game.away_spread:
-        if cur_time - change_vector[1][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
+        if (cur_time - change_vector[1][0]).seconds < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[1] = [cur_time, True]
-    elif cur_time - change_vector[1][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
+    elif (cur_time - change_vector[1][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[1][1] = False
     if game_db['home_ml_cur'] != game.home_ml:
-        if cur_time - change_vector[2][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
+        if (cur_time - change_vector[2][0]).seconds < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[2] = [cur_time, True]
-    elif cur_time - change_vector[2][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
+    elif (cur_time - change_vector[2][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[2][1] = False
     if game_db['away_ml_cur'] != game.away_ml:
-        if cur_time - change_vector[3][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
+        if (cur_time - change_vector[3][0]).seconds < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[3] = [cur_time, True]
-    elif cur_time - change_vector[3][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
+    elif (cur_time - change_vector[3][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[3][1] = False
     if game_db['over_cur'] != game.over:
-        if cur_time - change_vector[4][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
+        if (cur_time - change_vector[4][0]).seconds < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[4] = [cur_time, True]
-    elif cur_time - change_vector[4][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
+    elif (cur_time - change_vector[4][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[4][1] = False
     if game_db['under_cur'] != game.under:
-        if cur_time - change_vector[5][0] < datetime.timedelta(Config.STEAM_THRESHOLD):
+        if (cur_time - change_vector[5][0]).seconds < Config.STEAM_THRESHOLD:
             steam = True
         change_vector[5] = [cur_time, True]
-    elif cur_time - change_vector[5][0] > datetime.timedelta(Config.LINE_CHANGE_THRESHOLD):
+    elif (cur_time - change_vector[5][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[5][1] = False
     return change_vector, steam
 
@@ -249,18 +249,32 @@ def get_steam_games(db):
     :param db: bovada db object
     :return: list of game objects for changed games, and steam games
     """
+
+    def reset_old_game_steam(game, collection):
+        change_vector = game['change_vector']
+        for k in range(6):
+            change_vector[k][1] = False
+        collection.update_one({'game_id': game['game_id']}, {'$set': {"steam": False,
+                                                                      "change_vector": change_vector}})
+
     changed_games, steam_games = [], []
     for sport in Config.SUPPORTED_SPORTS:
         collection = select_collection(db, sport)
         changed_cursor = collection.find({"change_vector": True})
-        steam_cursor = collection.find({"steam": True})
         if changed_cursor.count() > 0:
             for game in changed_cursor:
-                changed_games.append(game)
+                if game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
+                    reset_old_game_steam(game, collection)
+                else:
+                    changed_games.append(game)
+        steam_cursor = collection.find({"steam": True})
         if steam_cursor.count() > 0:
             for game in steam_cursor:
-                steam_games.append(game)
-    # TODO: sort each category by time stamp? maybe....
+                if game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
+                    reset_old_game_steam(game, collection)
+                else:
+                    steam_games.append(game)
+
     return changed_games, steam_games
 
 
