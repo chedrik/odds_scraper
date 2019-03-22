@@ -118,7 +118,9 @@ def make_plot(game):
     home_ml_source = convert_odds_to_source(game, 'home_ml')
     away_ml_source = convert_odds_to_source(game, 'away_ml')
     over_source = convert_odds_to_source(game, 'over')
+    over_source.data['odds'] += 0.01
     under_source = convert_odds_to_source(game, 'under')
+    under_source.data['odds'] -= 0.01
 
     # generate dynamic color scale and assign to spreads and totals (ml needs no color)
     colors = Config.COLORS
