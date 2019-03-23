@@ -118,3 +118,23 @@ def odds_update():
             'under': [make_odds_pretty(game['under_cur'][0]), make_odds_pretty(game['under_cur'][1])]}
 
     return json.dumps(return_dict)
+
+
+@bp.route('/steam_update', methods=['POST'])
+def steam_update():
+    if request.method == 'POST':
+        old_game = eval(request.form['game'])  # converts unicode -> dictionary
+        cur_sport = get_team_sport(old_game['game_id'][1], db.teams)
+        if cur_sport is None:
+            # log error
+            return json.dumps({})
+
+        collection = select_collection(db, cur_sport)
+        game = collection.find_one({'game_id': old_game['game_id']})
+        if game is None:
+            # log error?
+            return json.dumps({})
+        return_dict = {'change_vector': game['change_vector'],
+                       'steam_vector': game['steam']}
+
+    return json.dumps(return_dict)

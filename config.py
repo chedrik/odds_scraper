@@ -22,8 +22,8 @@ class Config(object):
     ADMINS = ['gambling.odds@gmail.com']
 
     SUPPORTED_SPORTS = ['NBA', 'NHL', 'MLB']
-    STEAM_THRESHOLD = os.environ.get('STEAM_THRESHOLD') or 60*60  # seconds for datetime delta
-    LINE_CHANGE_THRESHOLD = os.environ.get('LINE_CHANGE_THRESHOLD') or 30*60  # seconds
+    STEAM_THRESHOLD = float(os.environ.get('STEAM_THRESHOLD') or 45*60)  # seconds for datetime delta
+    LINE_CHANGE_THRESHOLD = float(os.environ.get('LINE_CHANGE_THRESHOLD') or 10000*60)  # seconds
     # DB_URI = os.environ.get('DATABASE_URL') or os.path.join(basedir, 'app.db')
 
     # Plot options

@@ -54,50 +54,50 @@ def check_steam(game, db_collection):
     """
     cur_time = datetime.datetime.utcnow()
     game_db = db_collection.find_one({'game_id': game.game_id})
-    steam = False
+    steam_vector = [False, False, False]
     if game_db is None or 'change_vector' not in game_db:  # New game, no steam
         return [[datetime.datetime.min, False], [datetime.datetime.min, False], [datetime.datetime.min, False],
-                [datetime.datetime.min, False], [datetime.datetime.min, False], [datetime.datetime.min, False]], steam
+                [datetime.datetime.min, False], [datetime.datetime.min, False], [datetime.datetime.min, False]], steam_vector
     else:
         change_vector = game_db['change_vector']
 
     if game_db['home_spread_cur'] != game.home_spread:
         if (cur_time - change_vector[0][0]).seconds < Config.STEAM_THRESHOLD:
-            steam = True
+            steam_vector[0] = True
         change_vector[0] = [cur_time, True]
     elif (cur_time - change_vector[0][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[0][1] = False
     if game_db['away_spread_cur'] != game.away_spread:
         if (cur_time - change_vector[1][0]).seconds < Config.STEAM_THRESHOLD:
-            steam = True
+            steam_vector[0] = True
         change_vector[1] = [cur_time, True]
     elif (cur_time - change_vector[1][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[1][1] = False
     if game_db['home_ml_cur'] != game.home_ml:
         if (cur_time - change_vector[2][0]).seconds < Config.STEAM_THRESHOLD:
-            steam = True
+            steam_vector[1] = True
         change_vector[2] = [cur_time, True]
     elif (cur_time - change_vector[2][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[2][1] = False
     if game_db['away_ml_cur'] != game.away_ml:
         if (cur_time - change_vector[3][0]).seconds < Config.STEAM_THRESHOLD:
-            steam = True
+            steam_vector[1] = True
         change_vector[3] = [cur_time, True]
     elif (cur_time - change_vector[3][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[3][1] = False
     if game_db['over_cur'] != game.over:
         if (cur_time - change_vector[4][0]).seconds < Config.STEAM_THRESHOLD:
-            steam = True
+            steam_vector[2] = True
         change_vector[4] = [cur_time, True]
     elif (cur_time - change_vector[4][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[4][1] = False
     if game_db['under_cur'] != game.under:
         if (cur_time - change_vector[5][0]).seconds < Config.STEAM_THRESHOLD:
-            steam = True
+            steam_vector[2] = True
         change_vector[5] = [cur_time, True]
     elif (cur_time - change_vector[5][0]).seconds > Config.LINE_CHANGE_THRESHOLD:
         change_vector[5][1] = False
-    return change_vector, steam
+    return change_vector, steam_vector
 
 
 def add_game_to_database(game, db_collection):
@@ -260,14 +260,14 @@ def get_steam_games(db):
     changed_games, steam_games = [], []
     for sport in Config.SUPPORTED_SPORTS:
         collection = select_collection(db, sport)
-        changed_cursor = collection.find({"change_vector": True})
+        changed_cursor = collection.find({"change_vector": {"$elemMatch": {"$elemMatch": {"$in": [True]}}}})
         if changed_cursor.count() > 0:
             for game in changed_cursor:
                 if game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
                     reset_old_game_steam(game, collection)
                 else:
                     changed_games.append(game)
-        steam_cursor = collection.find({"steam": True})
+        steam_cursor = collection.find({"steam": {"$elemMatch": {"$elemMatch": {"$in": [True]}}}})
         if steam_cursor.count() > 0:
             for game in steam_cursor:
                 if game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
