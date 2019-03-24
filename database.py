@@ -260,14 +260,14 @@ def get_steam_games(db):
     changed_games, steam_games = [], []
     for sport in Config.SUPPORTED_SPORTS:
         collection = select_collection(db, sport)
-        changed_cursor = collection.find({"change_vector": {"$elemMatch": {"$elemMatch": {"$in": [True]}}}})
+        changed_cursor = collection.find({"change_vector": {"$exists": True}})
         if changed_cursor.count() > 0:
             for game in changed_cursor:
                 if game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
                     reset_old_game_steam(game, collection)
                 else:
                     changed_games.append(game)
-        steam_cursor = collection.find({"steam": {"$elemMatch": {"$elemMatch": {"$in": [True]}}}})
+        steam_cursor = collection.find({"steam": {"$exists": True}})
         if steam_cursor.count() > 0:
             for game in steam_cursor:
                 if game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
