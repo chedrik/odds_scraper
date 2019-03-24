@@ -1,7 +1,7 @@
 function update_game_styling() {
     for (var table = 1; table <= 2; table++) { // update for changed & steam tables
         var table_string = "game_table" + table;
-        if (document.getElementById(table_string) { // both tables may not be there
+        if (document.getElementById(table_string)) { // both tables may not be there
             var games = document.getElementById(table_string).getElementsByTagName("tbody")[0].getElementsByClassName('clickable');
             for (index = 0; index < games.length; index++) {
                 var game_data = $(games[index]).attr('data-game')
