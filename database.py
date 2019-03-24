@@ -262,7 +262,6 @@ def get_steam_games(db):
                                                                                    [datetime.datetime.min, False],
                                                                                    [datetime.datetime.min, False]]
                                                                                }})
-        #print game['game_id'], result.raw_result
 
     changed_games, steam_games = [], []
     for sport in Config.SUPPORTED_SPORTS:
@@ -270,7 +269,7 @@ def get_steam_games(db):
         potential_change_cursor = collection.find({"change_vector": {"$exists": True}})
         for game in potential_change_cursor:
             if True in np.array(game['change_vector'])[:, 1] and game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
-                changed_games.append()
+                changed_games.append(game)
             elif True in np.array(game['change_vector'])[:, 1]:
                 reset_old_game_steam(game, collection)
         steam_cursor = collection.find({"steam": {"$in": [True]}})
