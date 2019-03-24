@@ -12,11 +12,11 @@ function update_game_styling(){
                 success: function(result){
                     var info_to_update = JSON.parse(result)
                     var tds = games[this.ajaxI].getElementsByTagName("td")
-                    if (info_to_update.change_vector[0][1] || info_to_update.change_vector[1][1] || info_to_update.steam_vector[0]) {
+                    if (info_to_update.change_vector[0] || info_to_update.change_vector[1] || info_to_update.steam_vector[0]) {
                         $(tds[1])[0].style.backgroundColor = "green";
-                    } else if (info_to_update.change_vector[2][1] || info_to_update.change_vector[3][1] || info_to_update.steam_vector[1]) {
+                    } else if (info_to_update.change_vector[2] || info_to_update.change_vector[3] || info_to_update.steam_vector[1]) {
                         $(tds[2])[0].style.backgroundColor = "green";
-                    } else if (info_to_update.change_vector[4][1] || info_to_update.change_vector[5][1] || info_to_update.steam_vector[2]) {
+                    } else if (info_to_update.change_vector[4] || info_to_update.change_vector[5] || info_to_update.steam_vector[2]) {
                         $(tds[3])[0].style.backgroundColor = "green";
                     }
                 }

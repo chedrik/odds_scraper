@@ -35,12 +35,17 @@ def convert_odds_to_source(game, item):
                 time = datetime(game['update_time'].year, month, day, int(hour), int(minute_data[0]))
                 item_times_list.append(time)
     times, items = np.array(item_times_list), np.array(item_list)
+
     if 'ml' in item:
         source = ColumnDataSource(data={
             'date': times,  # python datetime object as X axis
             'prices': items[:, ]
         })
     else:
+        idxo, idxp = np.nonzero(items[:, 0]), np.nonzero(items[:, 1])
+        idxs = [val for val in idxo[0] if val in idxp[0]]
+        times = times[idxs]
+        items = items[idxs]
         source = ColumnDataSource(data={
             'date': times,  # python datetime object as X axis
             'odds': items[:, 0],

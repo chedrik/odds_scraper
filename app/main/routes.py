@@ -123,18 +123,12 @@ def odds_update():
 @bp.route('/steam_update', methods=['POST'])
 def steam_update():
     if request.method == 'POST':
-        old_game = eval(request.form['game'])  # converts unicode -> dictionary
-        cur_sport = get_team_sport(old_game['game_id'][1], db.teams)
-        if cur_sport is None:
-            # log error
-            return json.dumps({})
-
-        collection = select_collection(db, cur_sport)
-        game = collection.find_one({'game_id': old_game['game_id']})
+        game = eval(request.form['game'])  # converts unicode -> dictionary
         if game is None:
             # log error?
             return json.dumps({})
-        return_dict = {'change_vector': game['change_vector'],
+        change_vec = [game['change_vector'][i][1] for i in range(len(game['change_vector']))]
+        return_dict = {'change_vector': change_vec,
                        'steam_vector': game['steam']}
 
     return json.dumps(return_dict)

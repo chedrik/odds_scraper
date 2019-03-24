@@ -1,5 +1,6 @@
 import pprint
 import datetime
+import numpy as np
 from pymongo import MongoClient
 from config import Config
 
@@ -57,7 +58,8 @@ def check_steam(game, db_collection):
     steam_vector = [False, False, False]
     if game_db is None or 'change_vector' not in game_db:  # New game, no steam
         return [[datetime.datetime.min, False], [datetime.datetime.min, False], [datetime.datetime.min, False],
-                [datetime.datetime.min, False], [datetime.datetime.min, False], [datetime.datetime.min, False]], steam_vector
+                [datetime.datetime.min, False], [datetime.datetime.min, False],
+                [datetime.datetime.min, False]], steam_vector
     else:
         change_vector = game_db['change_vector']
 
@@ -251,23 +253,27 @@ def get_steam_games(db):
     """
 
     def reset_old_game_steam(game, collection):
-        change_vector = game['change_vector']
-        for k in range(6):
-            change_vector[k][1] = False
-        collection.update_one({'game_id': game['game_id']}, {'$set': {"steam": False,
-                                                                      "change_vector": change_vector}})
+        result = collection.update_one({'game_id': game['game_id']}, {'$set': {"steam": [False, False, False],
+                                                                               "change_vector": [
+                                                                                   [datetime.datetime.min, False],
+                                                                                   [datetime.datetime.min, False],
+                                                                                   [datetime.datetime.min, False],
+                                                                                   [datetime.datetime.min, False],
+                                                                                   [datetime.datetime.min, False],
+                                                                                   [datetime.datetime.min, False]]
+                                                                               }})
+        #print game['game_id'], result.raw_result
 
     changed_games, steam_games = [], []
     for sport in Config.SUPPORTED_SPORTS:
         collection = select_collection(db, sport)
-        changed_cursor = collection.find({"change_vector": {"$exists": True}})
-        if changed_cursor.count() > 0:
-            for game in changed_cursor:
-                if game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
-                    reset_old_game_steam(game, collection)
-                else:
-                    changed_games.append(game)
-        steam_cursor = collection.find({"steam": {"$exists": True}})
+        potential_change_cursor = collection.find({"change_vector": {"$exists": True}})
+        for game in potential_change_cursor:
+            if True in np.array(game['change_vector'])[:, 1] and game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
+                changed_games.append()
+            elif True in np.array(game['change_vector'])[:, 1]:
+                reset_old_game_steam(game, collection)
+        steam_cursor = collection.find({"steam": {"$in": [True]}})
         if steam_cursor.count() > 0:
             for game in steam_cursor:
                 if game['game_id'][0] is not None and datetime.datetime.now() < game['game_id'][0]:
